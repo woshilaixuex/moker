@@ -1,26 +1,29 @@
-<mxfile host="app.diagrams.net" modified="2024-05-04T08:30:43.887Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" etag="FGXlWPWqAqL4A3V33vF-" version="24.3.1" type="github">
+<mxfile host="app.diagrams.net" modified="2024-05-04T08:34:57.765Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36" etag="lD4qRbgqOX-HUTWipiVb" version="24.3.1" type="github">
   <diagram name="第 1 页" id="cqVoouBwEhZ9X5KKcfai">
     <mxGraphModel dx="1050" dy="522" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
         <mxCell id="4bgU9eHifBUtjP_TErYf-1" value="学生" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="140" y="90" width="120" height="60" as="geometry" />
+          <mxGeometry x="180" y="170" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="4bgU9eHifBUtjP_TErYf-2" value="教师" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="140" y="290" width="120" height="60" as="geometry" />
+          <mxGeometry x="170" y="340" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="4bgU9eHifBUtjP_TErYf-3" value="管理员" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="730" y="170" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="4bgU9eHifBUtjP_TErYf-4" value="课程" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="520" y="90" width="120" height="60" as="geometry" />
+          <mxGeometry x="500" y="280" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="4bgU9eHifBUtjP_TErYf-6" value="用户" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="280" y="190" width="120" height="60" as="geometry" />
+          <mxGeometry x="10" y="210" width="120" height="60" as="geometry" />
         </mxCell>
         <mxCell id="4bgU9eHifBUtjP_TErYf-7" value="选课" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="530" y="210" width="120" height="60" as="geometry" />
+          <mxGeometry x="590" y="150" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="4bgU9eHifBUtjP_TErYf-8" value="课堂信息" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="700" y="390" width="120" height="60" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
