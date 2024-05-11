@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-type Basic interface {
+type BasicErr interface {
 	GetErrCode() uint32
 	GetErrMsg() string
 	GetTime() time.Time
@@ -24,7 +24,7 @@ func (e *Causer) Error() string {
 	return fmt.Sprintf("%s: %s", e.When, e.Message)
 }
 
-func NewCauser(code uint32, message string) Basic {
+func NewCauser(code uint32, message string) BasicErr {
 	return &Causer{
 		Code:    code,
 		When:    time.Now(),
@@ -61,7 +61,7 @@ func (e *MError) Error() string {
 	return fmt.Sprintf("%s: %s", e.When, e.Message)
 }
 
-func NewMError(code uint32, message string, cause error) Basic {
+func NewMError(code uint32, message string, cause error) BasicErr {
 	return &MError{
 		Code:    code,
 		When:    time.Now(),
