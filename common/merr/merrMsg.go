@@ -23,16 +23,23 @@ func CreateNewErrorInfo(code uint32, msg string) bool {
 func NewMapErrMsg(errccode uint32, errMsg string) bool {
 	_, ok := message[errccode]
 	if ok {
-		logx.Error("errcode:%v is exit", errccode)
+		logx.Errorf("errcode:%v is exit", errccode)
 	} else {
 		message[errccode] = errors.New(errMsg)
 	}
 	return ok
 }
 
+func StringMapErrMsg(errcode uint32) string {
+	if err, ok := message[errcode]; ok {
+		return err.Error()
+	} else {
+		return "未定义错误"
+	}
+}
 func MapErrMsg(errcode uint32) error {
-	if msg, ok := message[errcode]; ok {
-		return msg
+	if err, ok := message[errcode]; ok {
+		return err
 	} else {
 		return errors.New("未定义错误")
 	}

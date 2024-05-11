@@ -3,6 +3,7 @@ module github.com/moker
 go 1.19
 
 require (
+	github.com/pkg/errors v0.9.1
 	github.com/zeromicro/go-zero v1.6.4
 	golang.org/x/crypto v0.23.0
 )
