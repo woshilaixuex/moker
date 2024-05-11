@@ -2,7 +2,10 @@ module github.com/moker
 
 go 1.19
 
-require github.com/zeromicro/go-zero v1.6.4
+require (
+	github.com/zeromicro/go-zero v1.6.4
+	golang.org/x/crypto v0.23.0
+)
 
 require (
 	github.com/beorn7/perks v1.0.1 // indirect
@@ -37,8 +40,8 @@ require (
 	go.opentelemetry.io/proto/otlp v1.0.0 // indirect
 	go.uber.org/automaxprocs v1.5.3 // indirect
 	golang.org/x/net v0.24.0 // indirect
-	golang.org/x/sys v0.19.0 // indirect
-	golang.org/x/text v0.14.0 // indirect
+	golang.org/x/sys v0.20.0 // indirect
+	golang.org/x/text v0.15.0 // indirect
 	google.golang.org/genproto/googleapis/api v0.0.0-20240227224415-6ceb2ff114de // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240227224415-6ceb2ff114de // indirect
 	google.golang.org/grpc v1.63.0 // indirect
