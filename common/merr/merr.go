@@ -61,7 +61,10 @@ func (e *MError) Error() string {
 	return fmt.Sprintf("%s: %s", e.When, e.Message)
 }
 
-func NewMError(code uint32, message string, cause error) BasicErr {
+func Wrap(code uint32, message string, cause error) BasicErr {
+	if cause == nil {
+		return NewCauser(code, message)
+	}
 	return &MError{
 		Code:    code,
 		When:    time.Now(),
@@ -69,13 +72,11 @@ func NewMError(code uint32, message string, cause error) BasicErr {
 		Message: message,
 	}
 }
+
 func (e *MError) Cause() error {
-	if e.cause == nil {
-		return nil
-	}
 	return e.cause
 }
-func Cause(err error) error {
+func Cause(err error) BasicErr {
 	type causer interface {
 		Cause() error
 	}
@@ -87,7 +88,7 @@ func Cause(err error) error {
 		}
 		err = cause.Cause()
 	}
-	return err
+	return err.(*Causer)
 }
 
 func (e *MError) GetErrCode() uint32 {

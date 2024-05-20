@@ -1,3 +1,13 @@
+syntax = "v1"
+
+info(
+	title: "角色服务"
+	desc: "角色服务"
+	author: "delyr1c"
+	email: "linyugang7295@gmail.com"
+	version: "v1"
+)
+
 type Request {
 	Name string `path:"name,options=you|me"`
 }

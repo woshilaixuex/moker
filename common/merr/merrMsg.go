@@ -9,11 +9,7 @@ var message map[uint32]error
 
 func init() {
 	message = make(map[uint32]error)
-	message[SERVER_COMMON_ERROR] = errors.New("服务器内部错误")
-	message[DB_ERROR] = errors.New("数据库错误")
-	message[DB_UPDATE_AFFECTED_ZERO_ERROR] = errors.New("数据库更新影响行数为0")
-	message[REUQEST_PARAM_ERROR] = errors.New("请求参数错误")
-	message[TOKEN_EXPIRE_ERROR] = errors.New("token过期")
+	message[UNKNOWN_ERROR] = errors.New("未知错误")
 }
 
 func CreateNewErrorInfo(code uint32, msg string) bool {

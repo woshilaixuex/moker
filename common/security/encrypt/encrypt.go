@@ -30,7 +30,7 @@ func (data *CodeData) Encrypt(password string) error {
 	salt := make([]byte, 8)
 	_, err := rand.Read(salt)
 	if err != nil {
-		logx.Debug(err)
+		logx.Errorf(err.Error())
 	}
 
 	//  使用Scrypt算法生成哈希值

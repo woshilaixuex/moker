@@ -29,7 +29,7 @@ func HttpResult(r *http.Request, w http.ResponseWriter, resp interface{}, err *m
 				}
 			}
 		}
-		logx.WithContext(r.Context()).Errorf("【API-ERR】 : %+v ", err)
+		logx.WithContext(r.Context()).Errorf("【API-ERR】 : %+v: %+v", err.Error(), err.GetTime())
 		httpx.WriteJson(w, http.StatusBadRequest, ErrorResp(errcode))
 	}
 }
