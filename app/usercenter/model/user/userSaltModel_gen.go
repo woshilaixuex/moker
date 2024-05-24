@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
+	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
@@ -19,11 +20,14 @@ var (
 	userSaltRows                = strings.Join(userSaltFieldNames, ",")
 	userSaltRowsExpectAutoSet   = strings.Join(stringx.Remove(userSaltFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	userSaltRowsWithPlaceHolder = strings.Join(stringx.Remove(userSaltFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+
+	cacheMokerUsercenterUserSaltIdPrefix     = "cache:mokerUsercenter:userSalt:id:"
+	cacheMokerUsercenterUserSaltUserIdPrefix = "cache:mokerUsercenter:userSalt:userId:"
 )
 
 type (
 	userSaltModel interface {
-		Insert(ctx context.Context, data *UserSalt) (sql.Result, error)
+		Insert(ctx context.Context,session sqlx.Session, data *UserSalt) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*UserSalt, error)
 		FindOneByUserId(ctx context.Context, userId int64) (*UserSalt, error)
 		Update(ctx context.Context, data *UserSalt) error
@@ -31,7 +35,7 @@ type (
 	}
 
 	defaultUserSaltModel struct {
-		conn  sqlx.SqlConn
+		sqlc.CachedConn
 		table string
 	}
 
@@ -42,23 +46,35 @@ type (
 	}
 )
 
-func newUserSaltModel(conn sqlx.SqlConn) *defaultUserSaltModel {
+func newUserSaltModel(conn sqlx.SqlConn, c cache.CacheConf) *defaultUserSaltModel {
 	return &defaultUserSaltModel{
-		conn:  conn,
-		table: "`user_salt`",
+		CachedConn: sqlc.NewConn(conn, c),
+		table:      "`user_salt`",
 	}
 }
 
 func (m *defaultUserSaltModel) Delete(ctx context.Context, id int64) error {
-	query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
-	_, err := m.conn.ExecCtx(ctx, query, id)
+	data, err := m.FindOne(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	mokerUsercenterUserSaltIdKey := fmt.Sprintf("%s%v", cacheMokerUsercenterUserSaltIdPrefix, id)
+	mokerUsercenterUserSaltUserIdKey := fmt.Sprintf("%s%v", cacheMokerUsercenterUserSaltUserIdPrefix, data.UserId)
+	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
+		return conn.ExecCtx(ctx, query, id)
+	}, mokerUsercenterUserSaltIdKey, mokerUsercenterUserSaltUserIdKey)
 	return err
 }
 
 func (m *defaultUserSaltModel) FindOne(ctx context.Context, id int64) (*UserSalt, error) {
-	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", userSaltRows, m.table)
+	mokerUsercenterUserSaltIdKey := fmt.Sprintf("%s%v", cacheMokerUsercenterUserSaltIdPrefix, id)
 	var resp UserSalt
-	err := m.conn.QueryRowCtx(ctx, &resp, query, id)
+	err := m.QueryRowCtx(ctx, &resp, mokerUsercenterUserSaltIdKey, func(ctx context.Context, conn sqlx.SqlConn, v interface{}) error {
+		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", userSaltRows, m.table)
+		return conn.QueryRowCtx(ctx, v, query, id)
+	})
 	switch err {
 	case nil:
 		return &resp, nil
@@ -70,9 +86,15 @@ func (m *defaultUserSaltModel) FindOne(ctx context.Context, id int64) (*UserSalt
 }
 
 func (m *defaultUserSaltModel) FindOneByUserId(ctx context.Context, userId int64) (*UserSalt, error) {
+	mokerUsercenterUserSaltUserIdKey := fmt.Sprintf("%s%v", cacheMokerUsercenterUserSaltUserIdPrefix, userId)
 	var resp UserSalt
-	query := fmt.Sprintf("select %s from %s where `user_id` = ? limit 1", userSaltRows, m.table)
-	err := m.conn.QueryRowCtx(ctx, &resp, query, userId)
+	err := m.QueryRowIndexCtx(ctx, &resp, mokerUsercenterUserSaltUserIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v interface{}) (i interface{}, e error) {
+		query := fmt.Sprintf("select %s from %s where `user_id` = ? limit 1", userSaltRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, userId); err != nil {
+			return nil, err
+		}
+		return resp.Id, nil
+	}, m.queryPrimary)
 	switch err {
 	case nil:
 		return &resp, nil
@@ -83,16 +105,41 @@ func (m *defaultUserSaltModel) FindOneByUserId(ctx context.Context, userId int64
 	}
 }
 
-func (m *defaultUserSaltModel) Insert(ctx context.Context, data *UserSalt) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?)", m.table, userSaltRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.UserId, data.Salt)
+func (m *defaultUserSaltModel) Insert(ctx context.Context,session sqlx.Session, data *UserSalt) (sql.Result, error) {
+	mokerUsercenterUserSaltIdKey := fmt.Sprintf("%s%v", cacheMokerUsercenterUserSaltIdPrefix, data.Id)
+	mokerUsercenterUserSaltUserIdKey := fmt.Sprintf("%s%v", cacheMokerUsercenterUserSaltUserIdPrefix, data.UserId)
+	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?)", m.table, userSaltRowsExpectAutoSet)
+		if session != nil{
+			return session.ExecCtx(ctx, query, data.UserId, data.Salt)
+		}
+		return conn.ExecCtx(ctx, query, data.UserId, data.Salt)
+	}, mokerUsercenterUserSaltIdKey, mokerUsercenterUserSaltUserIdKey)
 	return ret, err
 }
 
 func (m *defaultUserSaltModel) Update(ctx context.Context, newData *UserSalt) error {
-	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, userSaltRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, newData.UserId, newData.Salt, newData.Id)
+	data, err := m.FindOne(ctx, newData.Id)
+	if err != nil {
+		return err
+	}
+
+	mokerUsercenterUserSaltIdKey := fmt.Sprintf("%s%v", cacheMokerUsercenterUserSaltIdPrefix, data.Id)
+	mokerUsercenterUserSaltUserIdKey := fmt.Sprintf("%s%v", cacheMokerUsercenterUserSaltUserIdPrefix, data.UserId)
+	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, userSaltRowsWithPlaceHolder)
+		return conn.ExecCtx(ctx, query, newData.UserId, newData.Salt, newData.Id)
+	}, mokerUsercenterUserSaltIdKey, mokerUsercenterUserSaltUserIdKey)
 	return err
+}
+
+func (m *defaultUserSaltModel) formatPrimary(primary interface{}) string {
+	return fmt.Sprintf("%s%v", cacheMokerUsercenterUserSaltIdPrefix, primary)
+}
+
+func (m *defaultUserSaltModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary interface{}) error {
+	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", userSaltRows, m.table)
+	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 
 func (m *defaultUserSaltModel) tableName() string {

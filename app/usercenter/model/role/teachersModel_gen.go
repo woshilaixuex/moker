@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
+	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
@@ -20,6 +21,9 @@ var (
 	teachersRows                = strings.Join(teachersFieldNames, ",")
 	teachersRowsExpectAutoSet   = strings.Join(stringx.Remove(teachersFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	teachersRowsWithPlaceHolder = strings.Join(stringx.Remove(teachersFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+
+	cacheMokerUsercenterTeachersIdPrefix       = "cache:mokerUsercenter:teachers:id:"
+	cacheMokerUsercenterTeachersIdUserIdPrefix = "cache:mokerUsercenter:teachers:id:userId:"
 )
 
 type (
@@ -32,7 +36,7 @@ type (
 	}
 
 	defaultTeachersModel struct {
-		conn  sqlx.SqlConn
+		sqlc.CachedConn
 		table string
 	}
 
@@ -50,23 +54,35 @@ type (
 	}
 )
 
-func newTeachersModel(conn sqlx.SqlConn) *defaultTeachersModel {
+func newTeachersModel(conn sqlx.SqlConn, c cache.CacheConf) *defaultTeachersModel {
 	return &defaultTeachersModel{
-		conn:  conn,
-		table: "`teachers`",
+		CachedConn: sqlc.NewConn(conn, c),
+		table:      "`teachers`",
 	}
 }
 
 func (m *defaultTeachersModel) Delete(ctx context.Context, id int64) error {
-	query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
-	_, err := m.conn.ExecCtx(ctx, query, id)
+	data, err := m.FindOne(ctx, id)
+	if err != nil {
+		return err
+	}
+
+	mokerUsercenterTeachersIdKey := fmt.Sprintf("%s%v", cacheMokerUsercenterTeachersIdPrefix, id)
+	mokerUsercenterTeachersIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheMokerUsercenterTeachersIdUserIdPrefix, data.Id, data.UserId)
+	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
+		return conn.ExecCtx(ctx, query, id)
+	}, mokerUsercenterTeachersIdKey, mokerUsercenterTeachersIdUserIdKey)
 	return err
 }
 
 func (m *defaultTeachersModel) FindOne(ctx context.Context, id int64) (*Teachers, error) {
-	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", teachersRows, m.table)
+	mokerUsercenterTeachersIdKey := fmt.Sprintf("%s%v", cacheMokerUsercenterTeachersIdPrefix, id)
 	var resp Teachers
-	err := m.conn.QueryRowCtx(ctx, &resp, query, id)
+	err := m.QueryRowCtx(ctx, &resp, mokerUsercenterTeachersIdKey, func(ctx context.Context, conn sqlx.SqlConn, v interface{}) error {
+		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", teachersRows, m.table)
+		return conn.QueryRowCtx(ctx, v, query, id)
+	})
 	switch err {
 	case nil:
 		return &resp, nil
@@ -78,9 +94,15 @@ func (m *defaultTeachersModel) FindOne(ctx context.Context, id int64) (*Teachers
 }
 
 func (m *defaultTeachersModel) FindOneByIdUserId(ctx context.Context, id int64, userId int64) (*Teachers, error) {
+	mokerUsercenterTeachersIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheMokerUsercenterTeachersIdUserIdPrefix, id, userId)
 	var resp Teachers
-	query := fmt.Sprintf("select %s from %s where `id` = ? and `user_id` = ? limit 1", teachersRows, m.table)
-	err := m.conn.QueryRowCtx(ctx, &resp, query, id, userId)
+	err := m.QueryRowIndexCtx(ctx, &resp, mokerUsercenterTeachersIdUserIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v interface{}) (i interface{}, e error) {
+		query := fmt.Sprintf("select %s from %s where `id` = ? and `user_id` = ? limit 1", teachersRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, id, userId); err != nil {
+			return nil, err
+		}
+		return resp.Id, nil
+	}, m.queryPrimary)
 	switch err {
 	case nil:
 		return &resp, nil
@@ -92,15 +114,37 @@ func (m *defaultTeachersModel) FindOneByIdUserId(ctx context.Context, id int64, 
 }
 
 func (m *defaultTeachersModel) Insert(ctx context.Context, data *Teachers) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, teachersRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.UserId, data.DeleteTime, data.DelState, data.Version, data.Name, data.Faculty, data.School)
+	mokerUsercenterTeachersIdKey := fmt.Sprintf("%s%v", cacheMokerUsercenterTeachersIdPrefix, data.Id)
+	mokerUsercenterTeachersIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheMokerUsercenterTeachersIdUserIdPrefix, data.Id, data.UserId)
+	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, teachersRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.UserId, data.DeleteTime, data.DelState, data.Version, data.Name, data.Faculty, data.School)
+	}, mokerUsercenterTeachersIdKey, mokerUsercenterTeachersIdUserIdKey)
 	return ret, err
 }
 
 func (m *defaultTeachersModel) Update(ctx context.Context, newData *Teachers) error {
-	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, teachersRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, newData.UserId, newData.DeleteTime, newData.DelState, newData.Version, newData.Name, newData.Faculty, newData.School, newData.Id)
+	data, err := m.FindOne(ctx, newData.Id)
+	if err != nil {
+		return err
+	}
+
+	mokerUsercenterTeachersIdKey := fmt.Sprintf("%s%v", cacheMokerUsercenterTeachersIdPrefix, data.Id)
+	mokerUsercenterTeachersIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheMokerUsercenterTeachersIdUserIdPrefix, data.Id, data.UserId)
+	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, teachersRowsWithPlaceHolder)
+		return conn.ExecCtx(ctx, query, newData.UserId, newData.DeleteTime, newData.DelState, newData.Version, newData.Name, newData.Faculty, newData.School, newData.Id)
+	}, mokerUsercenterTeachersIdKey, mokerUsercenterTeachersIdUserIdKey)
 	return err
+}
+
+func (m *defaultTeachersModel) formatPrimary(primary interface{}) string {
+	return fmt.Sprintf("%s%v", cacheMokerUsercenterTeachersIdPrefix, primary)
+}
+
+func (m *defaultTeachersModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary interface{}) error {
+	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", teachersRows, m.table)
+	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 
 func (m *defaultTeachersModel) tableName() string {

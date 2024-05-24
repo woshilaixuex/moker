@@ -10,6 +10,7 @@ import (
 	"time"
 
 	"github.com/zeromicro/go-zero/core/stores/builder"
+	"github.com/zeromicro/go-zero/core/stores/cache"
 	"github.com/zeromicro/go-zero/core/stores/sqlc"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 	"github.com/zeromicro/go-zero/core/stringx"
@@ -20,6 +21,8 @@ var (
 	roleRows                = strings.Join(roleFieldNames, ",")
 	roleRowsExpectAutoSet   = strings.Join(stringx.Remove(roleFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), ",")
 	roleRowsWithPlaceHolder = strings.Join(stringx.Remove(roleFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
+
+	cacheMokerUsercenterRoleIdPrefix = "cache:mokerUsercenter:role:id:"
 )
 
 type (
@@ -31,7 +34,7 @@ type (
 	}
 
 	defaultRoleModel struct {
-		conn  sqlx.SqlConn
+		sqlc.CachedConn
 		table string
 	}
 
@@ -48,23 +51,29 @@ type (
 	}
 )
 
-func newRoleModel(conn sqlx.SqlConn) *defaultRoleModel {
+func newRoleModel(conn sqlx.SqlConn, c cache.CacheConf) *defaultRoleModel {
 	return &defaultRoleModel{
-		conn:  conn,
-		table: "`role`",
+		CachedConn: sqlc.NewConn(conn, c),
+		table:      "`role`",
 	}
 }
 
 func (m *defaultRoleModel) Delete(ctx context.Context, id int64) error {
-	query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
-	_, err := m.conn.ExecCtx(ctx, query, id)
+	mokerUsercenterRoleIdKey := fmt.Sprintf("%s%v", cacheMokerUsercenterRoleIdPrefix, id)
+	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+		query := fmt.Sprintf("delete from %s where `id` = ?", m.table)
+		return conn.ExecCtx(ctx, query, id)
+	}, mokerUsercenterRoleIdKey)
 	return err
 }
 
 func (m *defaultRoleModel) FindOne(ctx context.Context, id int64) (*Role, error) {
-	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", roleRows, m.table)
+	mokerUsercenterRoleIdKey := fmt.Sprintf("%s%v", cacheMokerUsercenterRoleIdPrefix, id)
 	var resp Role
-	err := m.conn.QueryRowCtx(ctx, &resp, query, id)
+	err := m.QueryRowCtx(ctx, &resp, mokerUsercenterRoleIdKey, func(ctx context.Context, conn sqlx.SqlConn, v interface{}) error {
+		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", roleRows, m.table)
+		return conn.QueryRowCtx(ctx, v, query, id)
+	})
 	switch err {
 	case nil:
 		return &resp, nil
@@ -76,15 +85,30 @@ func (m *defaultRoleModel) FindOne(ctx context.Context, id int64) (*Role, error)
 }
 
 func (m *defaultRoleModel) Insert(ctx context.Context, data *Role) (sql.Result, error) {
-	query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?)", m.table, roleRowsExpectAutoSet)
-	ret, err := m.conn.ExecCtx(ctx, query, data.UserId, data.DeleteTime, data.DelState, data.Version, data.RoleName, data.RoleZhName)
+	mokerUsercenterRoleIdKey := fmt.Sprintf("%s%v", cacheMokerUsercenterRoleIdPrefix, data.Id)
+	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?)", m.table, roleRowsExpectAutoSet)
+		return conn.ExecCtx(ctx, query, data.UserId, data.DeleteTime, data.DelState, data.Version, data.RoleName, data.RoleZhName)
+	}, mokerUsercenterRoleIdKey)
 	return ret, err
 }
 
 func (m *defaultRoleModel) Update(ctx context.Context, data *Role) error {
-	query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, roleRowsWithPlaceHolder)
-	_, err := m.conn.ExecCtx(ctx, query, data.UserId, data.DeleteTime, data.DelState, data.Version, data.RoleName, data.RoleZhName, data.Id)
+	mokerUsercenterRoleIdKey := fmt.Sprintf("%s%v", cacheMokerUsercenterRoleIdPrefix, data.Id)
+	_, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
+		query := fmt.Sprintf("update %s set %s where `id` = ?", m.table, roleRowsWithPlaceHolder)
+		return conn.ExecCtx(ctx, query, data.UserId, data.DeleteTime, data.DelState, data.Version, data.RoleName, data.RoleZhName, data.Id)
+	}, mokerUsercenterRoleIdKey)
 	return err
+}
+
+func (m *defaultRoleModel) formatPrimary(primary interface{}) string {
+	return fmt.Sprintf("%s%v", cacheMokerUsercenterRoleIdPrefix, primary)
+}
+
+func (m *defaultRoleModel) queryPrimary(ctx context.Context, conn sqlx.SqlConn, v, primary interface{}) error {
+	query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", roleRows, m.table)
+	return conn.QueryRowCtx(ctx, v, query, primary)
 }
 
 func (m *defaultRoleModel) tableName() string {

@@ -1,6 +1,9 @@
 package role
 
-import "github.com/zeromicro/go-zero/core/stores/sqlx"
+import (
+	"github.com/zeromicro/go-zero/core/stores/cache"
+	"github.com/zeromicro/go-zero/core/stores/sqlx"
+)
 
 var _ StudentsModel = (*customStudentsModel)(nil)
 
@@ -17,8 +20,8 @@ type (
 )
 
 // NewStudentsModel returns a model for the database table.
-func NewStudentsModel(conn sqlx.SqlConn) StudentsModel {
+func NewStudentsModel(conn sqlx.SqlConn, c cache.CacheConf) StudentsModel {
 	return &customStudentsModel{
-		defaultStudentsModel: newStudentsModel(conn),
+		defaultStudentsModel: newStudentsModel(conn, c),
 	}
 }
