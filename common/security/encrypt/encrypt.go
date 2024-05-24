@@ -16,17 +16,17 @@ type (
 		Salt     string
 		HashCode string
 	}
-	Encrypt interface {
+	EncryptPass interface {
 		Encrypt(password string) error
 		DeCode(password string) (bool, error)
 	}
 )
 
-func NewCodeData() CodeData {
-	return CodeData{}
+func NewCodeData() *CodeData {
+	return &CodeData{}
 }
 
-func (data *CodeData) Encrypt(password string) error {
+func (data *CodeData) Encrypt(password string) (*CodeData, error) {
 	salt := make([]byte, 8)
 	_, err := rand.Read(salt)
 	if err != nil {
@@ -41,7 +41,7 @@ func (data *CodeData) Encrypt(password string) error {
 
 	data.HashCode = base64.StdEncoding.EncodeToString(hash)
 	data.Salt = base64.StdEncoding.EncodeToString(salt)
-	return nil
+	return data, nil
 }
 func (data *CodeData) DeCode(password string) (bool, error) {
 

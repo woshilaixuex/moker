@@ -1,0 +1,38 @@
+syntax = "v1"
+
+info(
+	title: "角色服务"
+	desc: "角色服务"
+	author: "delyr1c"
+	email: "linyugang7295@gmail.com"
+	version: "v1"
+)
+import (
+	"user/user.api"
+	"role/role.api"
+)
+
+@server(
+	prefix: moker/v1
+	group: UserController
+)
+service usercenter-api {
+	@doc "获取验证码"
+	@handler VerCode
+	get /user/vercode returns (VerCodeResp)
+	@doc "用户登录"
+	@handler UserLoginHandler
+	post /user/login (LoginReq) returns (LoginResp)
+	@doc "用户注册"
+	@handler UserRegisterHandler
+	post /user/register (RegisterReq) returns (RegisterResp)
+}
+
+//@server(
+//	prefix: swift/v1
+//	group: 	UserCenter
+//	jwt: 	JwtAuth
+//)
+//service usercenter-api {
+//
+//}
