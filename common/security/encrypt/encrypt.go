@@ -43,13 +43,13 @@ func (data *CodeData) Encrypt(password string) (*CodeData, error) {
 	data.Salt = base64.StdEncoding.EncodeToString(salt)
 	return data, nil
 }
-func (data *CodeData) DeCode(password string) (bool, error) {
+func (data *CodeData) DeCode(password, hashcode, salt string) (bool, error) {
 
-	retrievedHash, err := base64.StdEncoding.DecodeString(data.HashCode)
+	retrievedHash, err := base64.StdEncoding.DecodeString(hashcode)
 	if err != nil {
 
 	}
-	retrievedSalt, err := base64.StdEncoding.DecodeString(data.Salt)
+	retrievedSalt, err := base64.StdEncoding.DecodeString(salt)
 	if err != nil {
 
 	}

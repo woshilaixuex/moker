@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/moker/app/usercenter/cmd/api/internal/svc"
 	"github.com/moker/app/usercenter/cmd/api/internal/types"
+	"github.com/moker/app/usercenter/cmd/rpc/usercenter"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -23,7 +24,15 @@ func NewVerCodeLogic(ctx context.Context, svcCtx *svc.ServiceContext) *VerCodeLo
 }
 
 func (l *VerCodeLogic) VerCode() (resp *types.VerCodeResp, err error) {
-	// todo: add your logic here and delete this line
+	// todo: 调用rpc获取验证码服务
+	verResp, err := l.svcCtx.UserCenterRPC.GetVerCode(l.ctx, &usercenter.GetVerCodeReq{})
+	if err != nil {
+		logx.Error(err.Error())
+		return nil, err
+	}
 
-	return
+	return &types.VerCodeResp{
+		Base64: verResp.B64S,
+		Key:    verResp.Key,
+	}, nil
 }

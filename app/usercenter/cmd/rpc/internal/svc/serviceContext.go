@@ -20,7 +20,6 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	sqlConn := sqlx.NewMysql(c.DB.DataSource)
 	return &ServiceContext{
 		Config:        c,
-		RedisClient:   redis.MustNewRedis(c.RedisConfig),
 		UserModel:     user.NewUserModel(sqlConn, c.Cache),
 		UserSaltModel: user.NewUserSaltModel(sqlConn, c.Cache),
 		Etools:        security.NewEncryptTools(),
