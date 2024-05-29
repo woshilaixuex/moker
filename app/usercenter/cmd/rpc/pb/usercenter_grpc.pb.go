@@ -21,8 +21,11 @@ type UsercenterClient interface {
 	GetVerCode(ctx context.Context, in *GetVerCodeReq, opts ...grpc.CallOption) (*GetVerCodeResp, error)
 	Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 	Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error)
-	GetUserInfo(ctx context.Context, in *GetUserInfoReq, opts ...grpc.CallOption) (*GetUserInfoResp, error)
 	GenerateToken(ctx context.Context, in *GenerateTokenReq, opts ...grpc.CallOption) (*GenerateTokenResp, error)
+	GetUserInfo(ctx context.Context, in *GetUserInfoReq, opts ...grpc.CallOption) (*GetUserInfoResp, error)
+	UpdateStudentInfo(ctx context.Context, in *UpdateStudentInfoReq, opts ...grpc.CallOption) (*UpdateStudentInfoResp, error)
+	UpdateTeacherInfo(ctx context.Context, in *UpdateTeacherInfoReq, opts ...grpc.CallOption) (*UpdateTeacherInfoResp, error)
+	DeleteUserInfo(ctx context.Context, in *DeleteUserInfoReq, opts ...grpc.CallOption) (*DeleteUserInfoResp, error)
 }
 
 type usercenterClient struct {
@@ -60,6 +63,15 @@ func (c *usercenterClient) Register(ctx context.Context, in *RegisterReq, opts .
 	return out, nil
 }
 
+func (c *usercenterClient) GenerateToken(ctx context.Context, in *GenerateTokenReq, opts ...grpc.CallOption) (*GenerateTokenResp, error) {
+	out := new(GenerateTokenResp)
+	err := c.cc.Invoke(ctx, "/pb.usercenter/generateToken", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *usercenterClient) GetUserInfo(ctx context.Context, in *GetUserInfoReq, opts ...grpc.CallOption) (*GetUserInfoResp, error) {
 	out := new(GetUserInfoResp)
 	err := c.cc.Invoke(ctx, "/pb.usercenter/getUserInfo", in, out, opts...)
@@ -69,9 +81,27 @@ func (c *usercenterClient) GetUserInfo(ctx context.Context, in *GetUserInfoReq, 
 	return out, nil
 }
 
-func (c *usercenterClient) GenerateToken(ctx context.Context, in *GenerateTokenReq, opts ...grpc.CallOption) (*GenerateTokenResp, error) {
-	out := new(GenerateTokenResp)
-	err := c.cc.Invoke(ctx, "/pb.usercenter/generateToken", in, out, opts...)
+func (c *usercenterClient) UpdateStudentInfo(ctx context.Context, in *UpdateStudentInfoReq, opts ...grpc.CallOption) (*UpdateStudentInfoResp, error) {
+	out := new(UpdateStudentInfoResp)
+	err := c.cc.Invoke(ctx, "/pb.usercenter/UpdateStudentInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *usercenterClient) UpdateTeacherInfo(ctx context.Context, in *UpdateTeacherInfoReq, opts ...grpc.CallOption) (*UpdateTeacherInfoResp, error) {
+	out := new(UpdateTeacherInfoResp)
+	err := c.cc.Invoke(ctx, "/pb.usercenter/UpdateTeacherInfo", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *usercenterClient) DeleteUserInfo(ctx context.Context, in *DeleteUserInfoReq, opts ...grpc.CallOption) (*DeleteUserInfoResp, error) {
+	out := new(DeleteUserInfoResp)
+	err := c.cc.Invoke(ctx, "/pb.usercenter/DeleteUserInfo", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -85,8 +115,11 @@ type UsercenterServer interface {
 	GetVerCode(context.Context, *GetVerCodeReq) (*GetVerCodeResp, error)
 	Login(context.Context, *LoginReq) (*LoginResp, error)
 	Register(context.Context, *RegisterReq) (*RegisterResp, error)
-	GetUserInfo(context.Context, *GetUserInfoReq) (*GetUserInfoResp, error)
 	GenerateToken(context.Context, *GenerateTokenReq) (*GenerateTokenResp, error)
+	GetUserInfo(context.Context, *GetUserInfoReq) (*GetUserInfoResp, error)
+	UpdateStudentInfo(context.Context, *UpdateStudentInfoReq) (*UpdateStudentInfoResp, error)
+	UpdateTeacherInfo(context.Context, *UpdateTeacherInfoReq) (*UpdateTeacherInfoResp, error)
+	DeleteUserInfo(context.Context, *DeleteUserInfoReq) (*DeleteUserInfoResp, error)
 	mustEmbedUnimplementedUsercenterServer()
 }
 
@@ -103,11 +136,20 @@ func (UnimplementedUsercenterServer) Login(context.Context, *LoginReq) (*LoginRe
 func (UnimplementedUsercenterServer) Register(context.Context, *RegisterReq) (*RegisterResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Register not implemented")
 }
+func (UnimplementedUsercenterServer) GenerateToken(context.Context, *GenerateTokenReq) (*GenerateTokenResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GenerateToken not implemented")
+}
 func (UnimplementedUsercenterServer) GetUserInfo(context.Context, *GetUserInfoReq) (*GetUserInfoResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserInfo not implemented")
 }
-func (UnimplementedUsercenterServer) GenerateToken(context.Context, *GenerateTokenReq) (*GenerateTokenResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GenerateToken not implemented")
+func (UnimplementedUsercenterServer) UpdateStudentInfo(context.Context, *UpdateStudentInfoReq) (*UpdateStudentInfoResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateStudentInfo not implemented")
+}
+func (UnimplementedUsercenterServer) UpdateTeacherInfo(context.Context, *UpdateTeacherInfoReq) (*UpdateTeacherInfoResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateTeacherInfo not implemented")
+}
+func (UnimplementedUsercenterServer) DeleteUserInfo(context.Context, *DeleteUserInfoReq) (*DeleteUserInfoResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUserInfo not implemented")
 }
 func (UnimplementedUsercenterServer) mustEmbedUnimplementedUsercenterServer() {}
 
@@ -176,6 +218,24 @@ func _Usercenter_Register_Handler(srv interface{}, ctx context.Context, dec func
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Usercenter_GenerateToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GenerateTokenReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsercenterServer).GenerateToken(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.usercenter/generateToken",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsercenterServer).GenerateToken(ctx, req.(*GenerateTokenReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Usercenter_GetUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetUserInfoReq)
 	if err := dec(in); err != nil {
@@ -194,20 +254,56 @@ func _Usercenter_GetUserInfo_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Usercenter_GenerateToken_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GenerateTokenReq)
+func _Usercenter_UpdateStudentInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateStudentInfoReq)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UsercenterServer).GenerateToken(ctx, in)
+		return srv.(UsercenterServer).UpdateStudentInfo(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.usercenter/generateToken",
+		FullMethod: "/pb.usercenter/UpdateStudentInfo",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UsercenterServer).GenerateToken(ctx, req.(*GenerateTokenReq))
+		return srv.(UsercenterServer).UpdateStudentInfo(ctx, req.(*UpdateStudentInfoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Usercenter_UpdateTeacherInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateTeacherInfoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsercenterServer).UpdateTeacherInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.usercenter/UpdateTeacherInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsercenterServer).UpdateTeacherInfo(ctx, req.(*UpdateTeacherInfoReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Usercenter_DeleteUserInfo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteUserInfoReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsercenterServer).DeleteUserInfo(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/pb.usercenter/DeleteUserInfo",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsercenterServer).DeleteUserInfo(ctx, req.(*DeleteUserInfoReq))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -232,12 +328,24 @@ var Usercenter_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Usercenter_Register_Handler,
 		},
 		{
+			MethodName: "generateToken",
+			Handler:    _Usercenter_GenerateToken_Handler,
+		},
+		{
 			MethodName: "getUserInfo",
 			Handler:    _Usercenter_GetUserInfo_Handler,
 		},
 		{
-			MethodName: "generateToken",
-			Handler:    _Usercenter_GenerateToken_Handler,
+			MethodName: "UpdateStudentInfo",
+			Handler:    _Usercenter_UpdateStudentInfo_Handler,
+		},
+		{
+			MethodName: "UpdateTeacherInfo",
+			Handler:    _Usercenter_UpdateTeacherInfo_Handler,
+		},
+		{
+			MethodName: "DeleteUserInfo",
+			Handler:    _Usercenter_DeleteUserInfo_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

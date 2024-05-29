@@ -28,11 +28,19 @@ service usercenter-api {
 	post /user/register (RegisterReq) returns (RegisterResp)
 }
 
-//@server(
-//	prefix: swift/v1
-//	group: 	UserCenter
-//	jwt: 	JwtAuth
-//)
-//service usercenter-api {
-//
-//}
+@server(
+	prefix: swift/v1
+	group: 	UserCenter
+	jwt: 	JwtAuth
+)
+service usercenter-api {
+	@doc "获取用户信息"
+	@handler GetUserInfo
+	get /user/userinfo (UserInfoReq) returns (UserInfoResp)
+	@doc "修改用户信息"
+	@handler UpdateUserInfo
+	put /user/userinfo (UserInfoReq) returns (UserInfoResp)
+	@doc "注销用户"
+	@handler DeleteUserInfo
+	delete /user/userinfo (UserInfoReq) returns (UserInfoResp)
+}

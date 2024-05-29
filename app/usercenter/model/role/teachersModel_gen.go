@@ -28,7 +28,7 @@ var (
 
 type (
 	teachersModel interface {
-		Insert(ctx context.Context, data *Teachers) (sql.Result, error)
+		Insert(ctx context.Context,session sqlx.Session, data *Teachers) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*Teachers, error)
 		FindOneByIdUserId(ctx context.Context, id int64, userId int64) (*Teachers, error)
 		Update(ctx context.Context, data *Teachers) error
@@ -113,11 +113,14 @@ func (m *defaultTeachersModel) FindOneByIdUserId(ctx context.Context, id int64, 
 	}
 }
 
-func (m *defaultTeachersModel) Insert(ctx context.Context, data *Teachers) (sql.Result, error) {
+func (m *defaultTeachersModel) Insert(ctx context.Context,session sqlx.Session, data *Teachers) (sql.Result, error) {
 	mokerUsercenterTeachersIdKey := fmt.Sprintf("%s%v", cacheMokerUsercenterTeachersIdPrefix, data.Id)
 	mokerUsercenterTeachersIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheMokerUsercenterTeachersIdUserIdPrefix, data.Id, data.UserId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, teachersRowsExpectAutoSet)
+		if session != nil{
+			session.ExecCtx(ctx, query, data.UserId, data.DeleteTime, data.DelState, data.Version, data.Name, data.Faculty, data.School)
+		}
 		return conn.ExecCtx(ctx, query, data.UserId, data.DeleteTime, data.DelState, data.Version, data.Name, data.Faculty, data.School)
 	}, mokerUsercenterTeachersIdKey, mokerUsercenterTeachersIdUserIdKey)
 	return ret, err

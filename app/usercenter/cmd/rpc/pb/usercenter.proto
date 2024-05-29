@@ -4,10 +4,19 @@ option go_package = "./pb";
 
 package pb;
 
-message UserInform{
+message UserInfo{
   int64 id = 1;
-  string account =2;
+  string account = 2;
   string username = 3;
+  Role role = 4;
+}
+message Role{
+  int64 stu_id = 1;
+  int64 userId = 2;
+  string name = 3;
+  string major = 4;
+  string faculty = 5;
+  string school = 6;
 }
 message UserAuth{
   int64  id = 1;
@@ -28,13 +37,15 @@ message RegisterReq{
   string key = 2;
   string account = 3;
   string password = 4;
-  string authKey = 5;
-  string authType = 6;
+  string role = 5;
+  string authKey = 6;
+  string authType = 7;
 }
 message RegisterResp{
   string accessToken = 1;
   int64  accessExpire = 2;
   int64  refreshAfter = 3;
+  string role = 4;
 }
 message LoginReq{
   string  authType = 1;
@@ -47,13 +58,6 @@ message LoginResp{
   int64  refreshAfter = 3;
 }
 
-message GetUserInfoReq{
-  int64  id = 1;
-}
-message GetUserInfoResp{
-  UserInform userInform = 1;
-}
-
 message GenerateTokenReq{
   int64 userId = 1;
 }
@@ -63,10 +67,46 @@ message GenerateTokenResp{
   int64  refreshAfter = 3;
 }
 
+message GetUserInfoReq{
+  int64 userId = 1;
+}
+message GetUserInfoResp{
+  UserInfo userinfo = 1;
+}
+message UpdateStudentInfoReq{
+  int64 stu_id = 1;
+  int64 userId = 2;
+  string name = 3;
+  string major = 4;
+  string faculty = 5;
+  string school = 6;
+}
+message UpdateStudentInfoResp{
+  UserInfo userinfo = 1;
+}
+message UpdateTeacherInfoReq{
+  int64 stu_id = 1;
+  int64 userId = 2;
+  string name = 3;
+  string faculty = 4;
+  string school = 5;
+}
+message UpdateTeacherInfoResp{
+  UserInfo userinfo = 1;
+}
+message DeleteUserInfoReq{
+  int64 userId = 1;
+}
+message DeleteUserInfoResp{
+  bool isOK = 1;
+}
 service usercenter {
   rpc getVerCode(GetVerCodeReq) returns (GetVerCodeResp);
   rpc login(LoginReq) returns(LoginResp);
   rpc register(RegisterReq) returns(RegisterResp);
-  rpc getUserInfo(GetUserInfoReq) returns(GetUserInfoResp);
   rpc generateToken(GenerateTokenReq) returns(GenerateTokenResp);
+  rpc getUserInfo(GetUserInfoReq) returns(GetUserInfoResp);
+  rpc UpdateStudentInfo(UpdateStudentInfoReq) returns(UpdateStudentInfoResp);
+  rpc UpdateTeacherInfo(UpdateTeacherInfoReq) returns(UpdateTeacherInfoResp);
+  rpc DeleteUserInfo(DeleteUserInfoReq) returns(DeleteUserInfoResp);
 }

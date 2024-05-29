@@ -2,9 +2,11 @@
 package handler
 
 import (
-	UserController2 "github.com/moker/app/usercenter/cmd/api/internal/handler/UserController"
-	"github.com/moker/app/usercenter/cmd/api/internal/svc"
 	"net/http"
+
+	UserCenter "github.com/moker/app/usercenter/cmd/api/internal/handler/UserCenter"
+	UserController "github.com/moker/app/usercenter/cmd/api/internal/handler/UserController"
+	"github.com/moker/app/usercenter/cmd/api/internal/svc"
 
 	"github.com/zeromicro/go-zero/rest"
 )
@@ -15,19 +17,41 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			{
 				Method:  http.MethodGet,
 				Path:    "/user/vercode",
-				Handler: UserController2.VerCodeHandler(serverCtx),
+				Handler: UserController.VerCodeHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/user/login",
-				Handler: UserController2.UserLoginHandler(serverCtx),
+				Handler: UserController.UserLoginHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPost,
 				Path:    "/user/register",
-				Handler: UserController2.UserRegisterHandler(serverCtx),
+				Handler: UserController.UserRegisterHandler(serverCtx),
 			},
 		},
 		rest.WithPrefix("/moker/v1"),
+	)
+
+	server.AddRoutes(
+		[]rest.Route{
+			{
+				Method:  http.MethodGet,
+				Path:    "/user/userinfo",
+				Handler: UserCenter.GetUserInfoHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/user/userinfo",
+				Handler: UserCenter.UpdateUserInfoHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodDelete,
+				Path:    "/user/userinfo",
+				Handler: UserCenter.DeleteUserInfoHandler(serverCtx),
+			},
+		},
+		rest.WithJwt(serverCtx.Config.JwtAuth.AccessSecret),
+		rest.WithPrefix("/swift/v1"),
 	)
 }

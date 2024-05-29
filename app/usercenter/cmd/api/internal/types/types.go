@@ -28,10 +28,20 @@ type RegisterReq struct {
 	VerKey   string `json:"ver_key"`
 	Account  string `json:"account"`
 	PassWord string `json:"password"`
+	Role     string `json:"role"`
 }
 
 type RegisterResp struct {
 	AccessToken  string `json:"accessToken"`
 	AccessExpire int64  `json:"accessExpire"`
 	RefreshAfter int64  `json:"refreshAfter"`
+	Role         string `json:"role"`
+}
+
+type UserInfoReq struct {
+	Base64 string `json:"b64s"`
+	Key    string `json:"key"`
+}
+
+type UserInfoResp struct {
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"github.com/moker/app/usercenter/cmd/rpc/internal/svc"
 	"github.com/moker/app/usercenter/cmd/rpc/pb"
+	"github.com/moker/app/usercenter/model/role"
 	"github.com/moker/app/usercenter/model/user"
 	"github.com/zeromicro/go-zero/core/stores/sqlx"
 
@@ -40,6 +41,7 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 		userinfo := new(user.User)
 		userinfo.Account = in.Account
 		userinfo.Username = in.Account
+		userinfo.Avatar = in.Role
 		encryptData, err := l.svcCtx.Etools.Codedata.Encrypt(in.Password)
 		if err != nil {
 
@@ -61,6 +63,28 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 		if err != nil {
 
 		}
+		if userinfo.Avatar == "student" {
+			stu := new(role.Students)
+			stu.UserId = userId
+			stu.Name = "未知"
+			stu.Major = "未知"
+			stu.Faculty = "未知"
+			stu.School = "未知"
+			_, err := l.svcCtx.StudentsModel.Insert(ctx, session, stu)
+			if err != nil {
+
+			}
+		} else {
+			tea := new(role.Teachers)
+			tea.UserId = userId
+			tea.Name = "未知"
+			tea.Faculty = "未知"
+			tea.School = "未知"
+			_, err := l.svcCtx.TeahcersModel.Insert(ctx, session, tea)
+			if err != nil {
+
+			}
+		}
 		return nil
 	}); err != nil {
 
@@ -77,5 +101,6 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 		AccessToken:  tokenResp.AccessToken,
 		AccessExpire: tokenResp.AccessExpire,
 		RefreshAfter: tokenResp.RefreshAfter,
+		Role:         in.Role,
 	}, nil
 }

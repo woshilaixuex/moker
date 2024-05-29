@@ -34,14 +34,16 @@ type (
 )
 type (
     RegisterReq {
-        VerCode  string `json:"ver_code"`
-        VerKey   string `json:"ver_key"`
-        Account   string `json:"account"`
-        PassWord string `json:"password"`
+        VerCode     string `json:"ver_code"`
+        VerKey      string `json:"ver_key"`
+        Account     string `json:"account"`
+        PassWord    string `json:"password"`
+        role        string `json:"role"`
     }
     RegisterResp {
         AccessToken  string `json:"accessToken"`
         AccessExpire int64  `json:"accessExpire"`
         RefreshAfter int64  `json:"refreshAfter"`
+        role        string `json:"role"`
     }
 )

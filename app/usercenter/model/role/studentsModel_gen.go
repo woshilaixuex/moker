@@ -6,6 +6,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"github.com/moker/common/globalkey"
 	"strings"
 	"time"
 
@@ -28,7 +29,7 @@ var (
 
 type (
 	studentsModel interface {
-		Insert(ctx context.Context, data *Students) (sql.Result, error)
+		Insert(ctx context.Context,session sqlx.Session,  data *Students) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*Students, error)
 		FindOneByIdUserId(ctx context.Context, id int64, userId int64) (*Students, error)
 		Update(ctx context.Context, data *Students) error
@@ -81,7 +82,7 @@ func (m *defaultStudentsModel) FindOne(ctx context.Context, id int64) (*Students
 	mokerUsercenterStudentsIdKey := fmt.Sprintf("%s%v", cacheMokerUsercenterStudentsIdPrefix, id)
 	var resp Students
 	err := m.QueryRowCtx(ctx, &resp, mokerUsercenterStudentsIdKey, func(ctx context.Context, conn sqlx.SqlConn, v interface{}) error {
-		query := fmt.Sprintf("select %s from %s where `id` = ? limit 1", studentsRows, m.table)
+		query := fmt.Sprintf("select %s from %s where `user_id` = ? limit 1", studentsRows, m.table)
 		return conn.QueryRowCtx(ctx, v, query, id)
 	})
 	switch err {
@@ -114,11 +115,16 @@ func (m *defaultStudentsModel) FindOneByIdUserId(ctx context.Context, id int64, 
 	}
 }
 
-func (m *defaultStudentsModel) Insert(ctx context.Context, data *Students) (sql.Result, error) {
+func (m *defaultStudentsModel) Insert(ctx context.Context,session sqlx.Session,  data *Students) (sql.Result, error) {
+	data.DeleteTime = time.Unix(0, 0)
+	data.DelState = globalkey.DelStateNo
 	mokerUsercenterStudentsIdKey := fmt.Sprintf("%s%v", cacheMokerUsercenterStudentsIdPrefix, data.Id)
 	mokerUsercenterStudentsIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheMokerUsercenterStudentsIdUserIdPrefix, data.Id, data.UserId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?)", m.table, studentsRowsExpectAutoSet)
+		if session != nil{
+			return session.ExecCtx(ctx, query, data.UserId, data.DeleteTime, data.DelState, data.Version, data.Name, data.Major, data.Faculty, data.School)
+		}
 		return conn.ExecCtx(ctx, query, data.UserId, data.DeleteTime, data.DelState, data.Version, data.Name, data.Major, data.Faculty, data.School)
 	}, mokerUsercenterStudentsIdKey, mokerUsercenterStudentsIdUserIdKey)
 	return ret, err

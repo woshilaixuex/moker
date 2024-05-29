@@ -5,32 +5,43 @@ package usercenter
 
 import (
 	"context"
-	pb2 "github.com/moker/app/usercenter/cmd/rpc/pb"
+
+	"github.com/moker/app/usercenter/cmd/rpc/pb"
 
 	"github.com/zeromicro/go-zero/zrpc"
 	"google.golang.org/grpc"
 )
 
 type (
-	GenerateTokenReq  = pb2.GenerateTokenReq
-	GenerateTokenResp = pb2.GenerateTokenResp
-	GetUserInfoReq    = pb2.GetUserInfoReq
-	GetUserInfoResp   = pb2.GetUserInfoResp
-	GetVerCodeReq     = pb2.GetVerCodeReq
-	GetVerCodeResp    = pb2.GetVerCodeResp
-	LoginReq          = pb2.LoginReq
-	LoginResp         = pb2.LoginResp
-	RegisterReq       = pb2.RegisterReq
-	RegisterResp      = pb2.RegisterResp
-	UserAuth          = pb2.UserAuth
-	UserInform        = pb2.UserInform
+	DeleteUserInfoReq     = pb.DeleteUserInfoReq
+	DeleteUserInfoResp    = pb.DeleteUserInfoResp
+	GenerateTokenReq      = pb.GenerateTokenReq
+	GenerateTokenResp     = pb.GenerateTokenResp
+	GetUserInfoReq        = pb.GetUserInfoReq
+	GetUserInfoResp       = pb.GetUserInfoResp
+	GetVerCodeReq         = pb.GetVerCodeReq
+	GetVerCodeResp        = pb.GetVerCodeResp
+	LoginReq              = pb.LoginReq
+	LoginResp             = pb.LoginResp
+	RegisterReq           = pb.RegisterReq
+	RegisterResp          = pb.RegisterResp
+	Role                  = pb.Role
+	UpdateStudentInfoReq  = pb.UpdateStudentInfoReq
+	UpdateStudentInfoResp = pb.UpdateStudentInfoResp
+	UpdateTeacherInfoReq  = pb.UpdateTeacherInfoReq
+	UpdateTeacherInfoResp = pb.UpdateTeacherInfoResp
+	UserAuth              = pb.UserAuth
+	UserInfo              = pb.UserInfo
 
 	Usercenter interface {
 		GetVerCode(ctx context.Context, in *GetVerCodeReq, opts ...grpc.CallOption) (*GetVerCodeResp, error)
 		Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error)
 		Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error)
-		GetUserInfo(ctx context.Context, in *GetUserInfoReq, opts ...grpc.CallOption) (*GetUserInfoResp, error)
 		GenerateToken(ctx context.Context, in *GenerateTokenReq, opts ...grpc.CallOption) (*GenerateTokenResp, error)
+		GetUserInfo(ctx context.Context, in *GetUserInfoReq, opts ...grpc.CallOption) (*GetUserInfoResp, error)
+		UpdateStudentInfo(ctx context.Context, in *UpdateStudentInfoReq, opts ...grpc.CallOption) (*UpdateStudentInfoResp, error)
+		UpdateTeacherInfo(ctx context.Context, in *UpdateTeacherInfoReq, opts ...grpc.CallOption) (*UpdateTeacherInfoResp, error)
+		DeleteUserInfo(ctx context.Context, in *DeleteUserInfoReq, opts ...grpc.CallOption) (*DeleteUserInfoResp, error)
 	}
 
 	defaultUsercenter struct {
@@ -45,26 +56,41 @@ func NewUsercenter(cli zrpc.Client) Usercenter {
 }
 
 func (m *defaultUsercenter) GetVerCode(ctx context.Context, in *GetVerCodeReq, opts ...grpc.CallOption) (*GetVerCodeResp, error) {
-	client := pb2.NewUsercenterClient(m.cli.Conn())
+	client := pb.NewUsercenterClient(m.cli.Conn())
 	return client.GetVerCode(ctx, in, opts...)
 }
 
 func (m *defaultUsercenter) Login(ctx context.Context, in *LoginReq, opts ...grpc.CallOption) (*LoginResp, error) {
-	client := pb2.NewUsercenterClient(m.cli.Conn())
+	client := pb.NewUsercenterClient(m.cli.Conn())
 	return client.Login(ctx, in, opts...)
 }
 
 func (m *defaultUsercenter) Register(ctx context.Context, in *RegisterReq, opts ...grpc.CallOption) (*RegisterResp, error) {
-	client := pb2.NewUsercenterClient(m.cli.Conn())
+	client := pb.NewUsercenterClient(m.cli.Conn())
 	return client.Register(ctx, in, opts...)
 }
 
+func (m *defaultUsercenter) GenerateToken(ctx context.Context, in *GenerateTokenReq, opts ...grpc.CallOption) (*GenerateTokenResp, error) {
+	client := pb.NewUsercenterClient(m.cli.Conn())
+	return client.GenerateToken(ctx, in, opts...)
+}
+
 func (m *defaultUsercenter) GetUserInfo(ctx context.Context, in *GetUserInfoReq, opts ...grpc.CallOption) (*GetUserInfoResp, error) {
-	client := pb2.NewUsercenterClient(m.cli.Conn())
+	client := pb.NewUsercenterClient(m.cli.Conn())
 	return client.GetUserInfo(ctx, in, opts...)
 }
 
-func (m *defaultUsercenter) GenerateToken(ctx context.Context, in *GenerateTokenReq, opts ...grpc.CallOption) (*GenerateTokenResp, error) {
-	client := pb2.NewUsercenterClient(m.cli.Conn())
-	return client.GenerateToken(ctx, in, opts...)
+func (m *defaultUsercenter) UpdateStudentInfo(ctx context.Context, in *UpdateStudentInfoReq, opts ...grpc.CallOption) (*UpdateStudentInfoResp, error) {
+	client := pb.NewUsercenterClient(m.cli.Conn())
+	return client.UpdateStudentInfo(ctx, in, opts...)
+}
+
+func (m *defaultUsercenter) UpdateTeacherInfo(ctx context.Context, in *UpdateTeacherInfoReq, opts ...grpc.CallOption) (*UpdateTeacherInfoResp, error) {
+	client := pb.NewUsercenterClient(m.cli.Conn())
+	return client.UpdateTeacherInfo(ctx, in, opts...)
+}
+
+func (m *defaultUsercenter) DeleteUserInfo(ctx context.Context, in *DeleteUserInfoReq, opts ...grpc.CallOption) (*DeleteUserInfoResp, error) {
+	client := pb.NewUsercenterClient(m.cli.Conn())
+	return client.DeleteUserInfo(ctx, in, opts...)
 }

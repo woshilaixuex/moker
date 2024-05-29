@@ -5,14 +5,15 @@ package server
 
 import (
 	"context"
-	logic2 "github.com/moker/app/usercenter/cmd/rpc/internal/logic"
+
+	"github.com/moker/app/usercenter/cmd/rpc/internal/logic"
 	"github.com/moker/app/usercenter/cmd/rpc/internal/svc"
-	pb2 "github.com/moker/app/usercenter/cmd/rpc/pb"
+	"github.com/moker/app/usercenter/cmd/rpc/pb"
 )
 
 type UsercenterServer struct {
 	svcCtx *svc.ServiceContext
-	pb2.UnimplementedUsercenterServer
+	pb.UnimplementedUsercenterServer
 }
 
 func NewUsercenterServer(svcCtx *svc.ServiceContext) *UsercenterServer {
@@ -21,27 +22,42 @@ func NewUsercenterServer(svcCtx *svc.ServiceContext) *UsercenterServer {
 	}
 }
 
-func (s *UsercenterServer) GetVerCode(ctx context.Context, in *pb2.GetVerCodeReq) (*pb2.GetVerCodeResp, error) {
-	l := logic2.NewGetVerCodeLogic(ctx, s.svcCtx)
+func (s *UsercenterServer) GetVerCode(ctx context.Context, in *pb.GetVerCodeReq) (*pb.GetVerCodeResp, error) {
+	l := logic.NewGetVerCodeLogic(ctx, s.svcCtx)
 	return l.GetVerCode(in)
 }
 
-func (s *UsercenterServer) Login(ctx context.Context, in *pb2.LoginReq) (*pb2.LoginResp, error) {
-	l := logic2.NewLoginLogic(ctx, s.svcCtx)
+func (s *UsercenterServer) Login(ctx context.Context, in *pb.LoginReq) (*pb.LoginResp, error) {
+	l := logic.NewLoginLogic(ctx, s.svcCtx)
 	return l.Login(in)
 }
 
-func (s *UsercenterServer) Register(ctx context.Context, in *pb2.RegisterReq) (*pb2.RegisterResp, error) {
-	l := logic2.NewRegisterLogic(ctx, s.svcCtx)
+func (s *UsercenterServer) Register(ctx context.Context, in *pb.RegisterReq) (*pb.RegisterResp, error) {
+	l := logic.NewRegisterLogic(ctx, s.svcCtx)
 	return l.Register(in)
 }
 
-func (s *UsercenterServer) GetUserInfo(ctx context.Context, in *pb2.GetUserInfoReq) (*pb2.GetUserInfoResp, error) {
-	l := logic2.NewGetUserInfoLogic(ctx, s.svcCtx)
+func (s *UsercenterServer) GenerateToken(ctx context.Context, in *pb.GenerateTokenReq) (*pb.GenerateTokenResp, error) {
+	l := logic.NewGenerateTokenLogic(ctx, s.svcCtx)
+	return l.GenerateToken(in)
+}
+
+func (s *UsercenterServer) GetUserInfo(ctx context.Context, in *pb.GetUserInfoReq) (*pb.GetUserInfoResp, error) {
+	l := logic.NewGetUserInfoLogic(ctx, s.svcCtx)
 	return l.GetUserInfo(in)
 }
 
-func (s *UsercenterServer) GenerateToken(ctx context.Context, in *pb2.GenerateTokenReq) (*pb2.GenerateTokenResp, error) {
-	l := logic2.NewGenerateTokenLogic(ctx, s.svcCtx)
-	return l.GenerateToken(in)
+func (s *UsercenterServer) UpdateStudentInfo(ctx context.Context, in *pb.UpdateStudentInfoReq) (*pb.UpdateStudentInfoResp, error) {
+	l := logic.NewUpdateStudentInfoLogic(ctx, s.svcCtx)
+	return l.UpdateStudentInfo(in)
+}
+
+func (s *UsercenterServer) UpdateTeacherInfo(ctx context.Context, in *pb.UpdateTeacherInfoReq) (*pb.UpdateTeacherInfoResp, error) {
+	l := logic.NewUpdateTeacherInfoLogic(ctx, s.svcCtx)
+	return l.UpdateTeacherInfo(in)
+}
+
+func (s *UsercenterServer) DeleteUserInfo(ctx context.Context, in *pb.DeleteUserInfoReq) (*pb.DeleteUserInfoResp, error) {
+	l := logic.NewDeleteUserInfoLogic(ctx, s.svcCtx)
+	return l.DeleteUserInfo(in)
 }
