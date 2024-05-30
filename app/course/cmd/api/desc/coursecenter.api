@@ -1,0 +1,53 @@
+syntax = "v1"
+
+info(
+	title: "课程管理服务"
+	desc: "课程管理服务"
+	author: "delyr1c"
+	email: "linyugang7295@gmail.com"
+	version: "v1"
+)
+import (
+	"course/course.api"
+)
+type Request {
+	Name string `path:"name,options=you|me"`
+}
+
+type Response {
+	Message string `json:"message"`
+}
+@server(
+	prefix: moker/v1
+	group: 	CourseController
+	jwt: 	JwtAuth
+)
+service course-api {
+	@doc "获取全部课程信息"
+	@handler GetCourseHandler
+	get /courses (GetCoursReq) returns (GetCoursResp)
+	@doc "获取搜索课程信息"
+	@handler GetSearchCourse
+	get /course/search (GetSearchCourseReq) returns (GetSearchCourseResp)
+	@doc "获取已选课程信息"
+	@handler GetECourse
+	get /course/stu/ecourse (GetECourseReq) returns (GetECourseResp)
+	@doc "删除选课程信息"
+	@handler DeletSCourse
+	delete /course/stu/ecourse (DeletSCourseReq) returns (DeletSCourseResp)
+	@doc "添加选课程信息"
+	@handler AddSCourse
+	post /course/stu/addsc (AddSCourseReq) returns (AddSCourseResp)
+	@doc "添加课程"
+	@handler AddTCourse
+	post /course/tea/tc (AddTCourseReq) returns (AddTCourseResp)
+	@doc "更新课程信息"
+	@handler UpdateTCourse
+	put /course/tea/tc (UpdateTCourseReq) returns (UpdateTCourseResp)
+	@doc "删除课程信息"
+	@handler DeleteTCourse
+	delete /course/tea/tc (DeleteTCourseReq) returns (DeleteTCourseResp)
+	@doc "获取教师自己的课程信息"
+	@handler GetTCourse
+	get /course/tea/tc (GetTCourseReq) returns (GetTCourseResp)
+}

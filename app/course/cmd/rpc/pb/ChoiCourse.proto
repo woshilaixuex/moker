@@ -1,0 +1,136 @@
+syntax = "proto3";
+
+option go_package = "./pb";
+
+package pb;
+// 请求消息
+message CourseRequest {
+}
+
+// 响应消息
+message CourseReply {
+   int64 c_id=1;
+   string c_name=2;
+   string info=3;
+   int64  teacher_id=4;
+   string teacher_name=5;
+}
+message CourseReplyList {
+  repeated CourseReply replies = 1; // 包含一个或多个CourseReply消息
+}
+// 根据课程名搜索课程
+message SearchACRequest {
+  string c_name=1;
+}
+message SearchACReply {
+   int64 c_id=1;
+   string c_name=2;
+  string info=3;
+   int64 teacher_id=4;
+   string teacher_name=5;
+}
+message SearchACReplyList {
+  repeated SearchACReply replies = 1;
+}
+//显示已选课的信息
+message SearchERequest {
+  int64 stu_id=1;
+}
+message SearchEReply {
+  int64 c_id=1;
+   string c_name=2;
+   string info=3;
+   int64 teacher_id=4;
+   string teacher_name=5;
+}
+message SearchEReplyList {
+  repeated SearchEReply replies = 1;
+}
+// 删除已选的课
+message SdelCRequest {
+  int64 stu_id=1;
+  int64 c_id=2;
+}
+
+message SdelCReply {
+  string info=1;
+}
+// 添加选课
+message SputCRequest {
+  int64 stu_id=1;
+  int64 c_id=2;
+}
+
+// 响应消息
+message SputCReply {
+  string info=1;
+}
+// 请求消息
+message TputCRequest {
+  int64 t_id=1;
+  string t_name=2;
+  int64 c_id=3;
+  string c_name=4;
+  string info=5;
+}
+message TputCRequestList {
+  repeated TputCRequest replies = 1;
+}
+// 响应消息
+message TputCReply {
+  string info=1;
+}
+//一组
+message TupdateCRequest {
+  int64 t_id=1;
+  string t_name=2;
+  int64 c_id=3;
+  string c_name=4;
+  string info=5;
+
+}
+
+message TupdateCReply {
+  string info=1;
+}
+//一组
+message TdeleteCRequest {
+  int64 t_id=1;
+  int64 c_id=2;
+}
+
+// 响应消息
+message TdeleteCReply {
+  string info=1;
+}
+
+
+message TgetCRequest {
+  int64 t_id=1;
+
+}
+
+message TgetCReply {
+  int64 t_id=1;
+  string t_name=2;
+  int64 c_id=3;
+   string c_name=4;
+   string info=5;
+   string respon=6;
+}
+message TgetCReplyList {
+  repeated TgetCReply replies = 1;
+}
+// 定义 Greeter 服务
+service getGreeter {
+  rpc getCourse(CourseRequest) returns (CourseReplyList);
+  rpc getSearchCourse(SearchACRequest)returns (SearchACReplyList);
+  rpc getSearchECourse(SearchERequest)returns (SearchEReplyList);
+  rpc deleteSCourse(SdelCRequest)returns (SdelCReply);
+  rpc putSCourse(SputCRequest)returns (SputCReply);
+  rpc putTCourse(TputCRequest)returns (TputCReply);
+  rpc updateTCourse(TupdateCRequest )returns (TupdateCReply);
+  rpc deleteTCourse(TdeleteCRequest )returns (TdeleteCReply );
+  rpc getTCourse( TgetCRequest )returns ( TgetCReplyList);
+}
+

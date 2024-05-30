@@ -1,0 +1,102 @@
+syntax = "v1"
+
+info(
+    title: "课程实例"
+    desc: "课程实例"
+    author: "delyr1c"
+    email: "linyugang7295@gmail.com"
+    version: "v1"
+)
+type (
+    Course{
+        CId     int64  `json:"c_id"`
+        CName   string `json:"c_name"`
+        Info    string `json:"info"`
+        TeaId   int64  `json:"tea_id"`
+        TeaName string `json:"tea_name"`
+    }
+    SC{
+        CId int64 `json:"c_id"`
+        CName   string `json:"c_name"`
+        StuId int64 `json:"stu_id"`
+    }
+    TCourse{
+        Course Course `json:"course"`
+        Respon string `json:"respon"`
+    }
+)
+
+type (
+    GetCoursReq{
+    }
+    GetCoursResp{
+        Courses []Course `json:"course"`
+    }
+)
+type (
+    GetSearchCourseReq{
+        CName string `json:"c_name"`
+    }
+    GetSearchCourseResp{
+        Courses []Course `json:"course"`
+    }
+)
+type (
+    GetECourseReq{
+        StuId int64 `json:"stu_id"`
+    }
+    GetECourseResp{
+        Courses []Course `json:"course"`
+    }
+)
+type (
+    DeletSCourseReq{
+        StuId int64 `json:"stu_id"`
+        CId int64 `json:"c_id"`
+    }
+    DeletSCourseResp{
+        Info string `json:"info"`
+    }
+)
+type (
+    AddSCourseReq{
+        StuId int64 `json:"stu_id"`
+        CId int64 `json:"c_id"`
+    }
+    AddSCourseResp{
+        Course Course `json:"course"`
+    }
+)
+type (
+    AddTCourseReq{
+        Course Course `json:"course"`
+    }
+    AddTCourseResp{
+        Course Course `json:"course"`
+    }
+)
+type (
+    UpdateTCourseReq{
+        Course Course `json:"course"`
+    }
+    UpdateTCourseResp{
+        Course Course `json:"course"`
+    }
+)
+type (
+    DeleteTCourseReq{
+        TeaId int64 `json:"tea_id"`
+        CId int64 `json:"c_id"`
+    }
+    DeleteTCourseResp{
+        Info string `json:"info"`
+    }
+)
+type (
+    GetTCourseReq{
+        TeaId int64 `json:"tea_id"`
+    }
+    GetTCourseResp{
+        TCourses []TCourse `json:"tcourse"`
+    }
+)
