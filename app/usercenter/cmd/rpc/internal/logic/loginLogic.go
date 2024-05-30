@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"fmt"
 	"github.com/moker/app/usercenter/cmd/rpc/internal/svc"
 	"github.com/moker/app/usercenter/cmd/rpc/pb"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -33,13 +34,14 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 	}
 	isOK, err := l.svcCtx.Etools.Codedata.DeCode(in.Password, userData.Password, saltData.Salt)
 	if err != nil {
-
+		fmt.Print("密码错误")
 	}
 	if !isOK {
 
 	}
 	// todo: 凭证生成
 	generateTokenLogic := NewGenerateTokenLogic(l.ctx, l.svcCtx)
+	fmt.Println(userData.Id)
 	tokenResp, err := generateTokenLogic.GenerateToken(&pb.GenerateTokenReq{
 		UserId: userData.Id,
 	})

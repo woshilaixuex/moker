@@ -29,18 +29,21 @@ service usercenter-api {
 }
 
 @server(
-	prefix: swift/v1
+	prefix: moker/v1
 	group: 	UserCenter
 	jwt: 	JwtAuth
 )
 service usercenter-api {
 	@doc "获取用户信息"
-	@handler GetUserInfo
-	get /user/userinfo (UserInfoReq) returns (UserInfoResp)
-	@doc "修改用户信息"
-	@handler UpdateUserInfo
-	put /user/userinfo (UserInfoReq) returns (UserInfoResp)
+	@handler GetUserInfoHandler
+	get /user/info (GetUserInfoReq) returns (GetUserInfoResp)
+	@doc "更改学生信息"
+	@handler UpdateStudentInfoHandler
+	put /user/student (UpdateStudentInfoReq) returns (UpdateStudentInfoResp)
+	@doc "更改学生信息"
+	@handler UpdateTeacherInfoHandler
+	put /user/teacher (UpdateTeacherInfoReq) returns (UpdateTeacherInfoResp)
 	@doc "注销用户"
-	@handler DeleteUserInfo
-	delete /user/userinfo (UserInfoReq) returns (UserInfoResp)
+	@handler DeleteUserInfoHandler
+	delete /user (DeleteUserInfoReq) returns (DeleteUserInfoResp)
 }

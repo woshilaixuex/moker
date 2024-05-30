@@ -34,13 +34,13 @@ func (l *GetUserInfoLogic) GetUserInfo(in *pb.GetUserInfoReq) (*pb.GetUserInfoRe
 	userInfo.Account = user.Account
 	userInfo.Username = user.Username
 	if user.Avatar == "student" {
-		one, err := l.svcCtx.StudentsModel.FindOne(l.ctx, user.Id)
+		one, err := l.svcCtx.StudentsModel.FindOneByUserId(l.ctx, user.Id)
 		if err != nil {
 			logx.Errorf(err.Error())
 		}
 		copyRoleInfo(userInfo, one)
 	} else {
-		one, err := l.svcCtx.TeahcersModel.FindOne(l.ctx, user.Id)
+		one, err := l.svcCtx.TeahcersModel.FindOneByUserId(l.ctx, user.Id)
 		if err != nil {
 			logx.Errorf(err.Error())
 		}

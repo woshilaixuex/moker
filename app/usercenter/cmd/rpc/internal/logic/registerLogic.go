@@ -74,7 +74,8 @@ func (l *RegisterLogic) Register(in *pb.RegisterReq) (*pb.RegisterResp, error) {
 			if err != nil {
 
 			}
-		} else {
+		}
+		if userinfo.Avatar == "teacher" {
 			tea := new(role.Teachers)
 			tea.UserId = userId
 			tea.Name = "未知"

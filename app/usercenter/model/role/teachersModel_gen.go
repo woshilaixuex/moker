@@ -6,6 +6,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	"github.com/moker/common/globalkey"
 	"strings"
 	"time"
 
@@ -23,6 +24,7 @@ var (
 	teachersRowsWithPlaceHolder = strings.Join(stringx.Remove(teachersFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
 	cacheMokerUsercenterTeachersIdPrefix       = "cache:mokerUsercenter:teachers:id:"
+	cacheMokerUsercenterTeachersUserIdPrefix = "cache:mokerUsercenter:teachers:userId:"
 	cacheMokerUsercenterTeachersIdUserIdPrefix = "cache:mokerUsercenter:teachers:id:userId:"
 )
 
@@ -30,7 +32,7 @@ type (
 	teachersModel interface {
 		Insert(ctx context.Context,session sqlx.Session, data *Teachers) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*Teachers, error)
-		FindOneByIdUserId(ctx context.Context, id int64, userId int64) (*Teachers, error)
+		FindOneByUserId(ctx context.Context, userId int64) (*Teachers, error)
 		Update(ctx context.Context, data *Teachers) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -93,12 +95,12 @@ func (m *defaultTeachersModel) FindOne(ctx context.Context, id int64) (*Teachers
 	}
 }
 
-func (m *defaultTeachersModel) FindOneByIdUserId(ctx context.Context, id int64, userId int64) (*Teachers, error) {
-	mokerUsercenterTeachersIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheMokerUsercenterTeachersIdUserIdPrefix, id, userId)
+func (m *defaultTeachersModel) FindOneByUserId(ctx context.Context, userId int64) (*Teachers, error) {
+	mokerUsercenterTeachersUserIdKey := fmt.Sprintf("%s%v:%v", cacheMokerUsercenterTeachersUserIdPrefix, userId)
 	var resp Teachers
-	err := m.QueryRowIndexCtx(ctx, &resp, mokerUsercenterTeachersIdUserIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v interface{}) (i interface{}, e error) {
-		query := fmt.Sprintf("select %s from %s where `id` = ? and `user_id` = ? limit 1", teachersRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, id, userId); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, mokerUsercenterTeachersUserIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v interface{}) (i interface{}, e error) {
+		query := fmt.Sprintf("select %s from %s where `user_id` = ? limit 1", teachersRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, userId); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -114,12 +116,14 @@ func (m *defaultTeachersModel) FindOneByIdUserId(ctx context.Context, id int64, 
 }
 
 func (m *defaultTeachersModel) Insert(ctx context.Context,session sqlx.Session, data *Teachers) (sql.Result, error) {
+	data.DeleteTime = time.Unix(0, 0)
+	data.DelState = globalkey.DelStateNo
 	mokerUsercenterTeachersIdKey := fmt.Sprintf("%s%v", cacheMokerUsercenterTeachersIdPrefix, data.Id)
 	mokerUsercenterTeachersIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheMokerUsercenterTeachersIdUserIdPrefix, data.Id, data.UserId)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?)", m.table, teachersRowsExpectAutoSet)
 		if session != nil{
-			session.ExecCtx(ctx, query, data.UserId, data.DeleteTime, data.DelState, data.Version, data.Name, data.Faculty, data.School)
+			return session.ExecCtx(ctx, query, data.UserId, data.DeleteTime, data.DelState, data.Version, data.Name, data.Faculty, data.School)
 		}
 		return conn.ExecCtx(ctx, query, data.UserId, data.DeleteTime, data.DelState, data.Version, data.Name, data.Faculty, data.School)
 	}, mokerUsercenterTeachersIdKey, mokerUsercenterTeachersIdUserIdKey)
@@ -131,7 +135,8 @@ func (m *defaultTeachersModel) Update(ctx context.Context, newData *Teachers) er
 	if err != nil {
 		return err
 	}
-
+	newData.DeleteTime = time.Unix(0, 0)
+	newData.DelState = globalkey.DelStateNo
 	mokerUsercenterTeachersIdKey := fmt.Sprintf("%s%v", cacheMokerUsercenterTeachersIdPrefix, data.Id)
 	mokerUsercenterTeachersIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheMokerUsercenterTeachersIdUserIdPrefix, data.Id, data.UserId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {

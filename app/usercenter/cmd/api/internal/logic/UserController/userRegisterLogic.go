@@ -30,6 +30,7 @@ func (l *UserRegisterLogic) UserRegister(req *types.RegisterReq) (resp *types.Re
 		Key:      req.VerKey,
 		Account:  req.Account,
 		Password: req.PassWord,
+		Role:     req.Role,
 		AuthKey:  "nil",
 		AuthType: "web",
 	})
@@ -41,5 +42,6 @@ func (l *UserRegisterLogic) UserRegister(req *types.RegisterReq) (resp *types.Re
 		AccessToken:  registerResponse.AccessToken,
 		AccessExpire: registerResponse.AccessExpire,
 		RefreshAfter: registerResponse.RefreshAfter,
+		Role:         req.Role,
 	}, nil
 }

@@ -9,11 +9,41 @@ info(
 )
 
 type (
-     UserInfoReq{
-        Base64 string `json:"b64s"`
-        Key    string `json:"key"`
+    Role{
+        Id       int64  `json:"id"`
+        UserId   int64  `json:"user_id"`
+        name     string `json:"name"`
+        major    string `json:"major"`
+        faculty string `json:"faculty"`
+        school   string `json:"school"`
     }
-     UserInfoResp{
-
-     }
+    GetUserInfoReq {
+    }
+    GetUserInfoResp {
+        Username string `json:"username"`
+        Role     Role `json:"role"`
+    }
+    UpdateStudentInfoReq {
+        Id       int64  `json:"id"`
+        name     string `json:"name"`
+        major    string `json:"major"`
+        faculty string `json:"faculty"`
+        school   string `json:"school"`
+    }
+    UpdateStudentInfoResp {
+        Role     Role `json:"role"`
+    }
+    UpdateTeacherInfoReq {
+        Id       int64  `json:"id"`
+        name     string `json:"name"`
+        faculty string `json:"faculty"`
+        school   string `json:"school"`
+    }
+    UpdateTeacherInfoResp {
+        Role    Role `json:"role"`
+    }
+    DeleteUserInfoReq {
+    }
+    DeleteUserInfoResp {
+    }
 )

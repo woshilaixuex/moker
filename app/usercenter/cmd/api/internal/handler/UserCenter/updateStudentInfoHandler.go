@@ -9,16 +9,16 @@ import (
 	"github.com/zeromicro/go-zero/rest/httpx"
 )
 
-func DeleteUserInfoHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
+func UpdateStudentInfoHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		var req types.DeleteUserInfoReq
+		var req types.UpdateStudentInfoReq
 		if err := httpx.Parse(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
 
-		l := UserCenter.NewDeleteUserInfoLogic(r.Context(), svcCtx)
-		resp, err := l.DeleteUserInfo(&req)
+		l := UserCenter.NewUpdateStudentInfoLogic(r.Context(), svcCtx)
+		resp, err := l.UpdateStudentInfo(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {

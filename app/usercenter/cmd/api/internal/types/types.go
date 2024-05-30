@@ -38,10 +38,48 @@ type RegisterResp struct {
 	Role         string `json:"role"`
 }
 
-type UserInfoReq struct {
-	Base64 string `json:"b64s"`
-	Key    string `json:"key"`
+type Role struct {
+	Id      int64  `json:"id"`
+	UserId  int64  `json:"user_id"`
+	Name    string `json:"name"`
+	Major   string `json:"major"`
+	Faculty string `json:"faculty"`
+	School  string `json:"school"`
 }
 
-type UserInfoResp struct {
+type GetUserInfoReq struct {
+}
+
+type GetUserInfoResp struct {
+	Username string `json:"username"`
+	Role     Role   `json:"role"`
+}
+
+type UpdateStudentInfoReq struct {
+	Id      int64  `json:"id"`
+	Name    string `json:"name"`
+	Major   string `json:"major"`
+	Faculty string `json:"faculty"`
+	School  string `json:"school"`
+}
+
+type UpdateStudentInfoResp struct {
+	Role Role `json:"role"`
+}
+
+type UpdateTeacherInfoReq struct {
+	Id      int64  `json:"id"`
+	Name    string `json:"name"`
+	Faculty string `json:"faculty"`
+	School  string `json:"school"`
+}
+
+type UpdateTeacherInfoResp struct {
+	Role Role `json:"role"`
+}
+
+type DeleteUserInfoReq struct {
+}
+
+type DeleteUserInfoResp struct {
 }

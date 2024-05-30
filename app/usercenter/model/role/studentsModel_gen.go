@@ -24,6 +24,7 @@ var (
 	studentsRowsWithPlaceHolder = strings.Join(stringx.Remove(studentsFieldNames, "`id`", "`create_at`", "`create_time`", "`created_at`", "`update_at`", "`update_time`", "`updated_at`"), "=?,") + "=?"
 
 	cacheMokerUsercenterStudentsIdPrefix       = "cache:mokerUsercenter:students:id:"
+	cacheMokerUsercenterStudentsUserIdPrefix 	= "cache:mokerUsercenter:students:userId:"
 	cacheMokerUsercenterStudentsIdUserIdPrefix = "cache:mokerUsercenter:students:id:userId:"
 )
 
@@ -31,7 +32,7 @@ type (
 	studentsModel interface {
 		Insert(ctx context.Context,session sqlx.Session,  data *Students) (sql.Result, error)
 		FindOne(ctx context.Context, id int64) (*Students, error)
-		FindOneByIdUserId(ctx context.Context, id int64, userId int64) (*Students, error)
+		FindOneByUserId(ctx context.Context, userId int64) (*Students, error)
 		Update(ctx context.Context, data *Students) error
 		Delete(ctx context.Context, id int64) error
 	}
@@ -95,12 +96,12 @@ func (m *defaultStudentsModel) FindOne(ctx context.Context, id int64) (*Students
 	}
 }
 
-func (m *defaultStudentsModel) FindOneByIdUserId(ctx context.Context, id int64, userId int64) (*Students, error) {
-	mokerUsercenterStudentsIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheMokerUsercenterStudentsIdUserIdPrefix, id, userId)
+func (m *defaultStudentsModel) FindOneByUserId(ctx context.Context, userId int64) (*Students, error) {
+	mokerUsercenterStudentsUserIdKey := fmt.Sprintf("%s%v:%v", cacheMokerUsercenterStudentsUserIdPrefix, userId)
 	var resp Students
-	err := m.QueryRowIndexCtx(ctx, &resp, mokerUsercenterStudentsIdUserIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v interface{}) (i interface{}, e error) {
-		query := fmt.Sprintf("select %s from %s where `id` = ? and `user_id` = ? limit 1", studentsRows, m.table)
-		if err := conn.QueryRowCtx(ctx, &resp, query, id, userId); err != nil {
+	err := m.QueryRowIndexCtx(ctx, &resp, mokerUsercenterStudentsUserIdKey, m.formatPrimary, func(ctx context.Context, conn sqlx.SqlConn, v interface{}) (i interface{}, e error) {
+		query := fmt.Sprintf("select %s from %s where `user_id` = ? limit 1", studentsRows, m.table)
+		if err := conn.QueryRowCtx(ctx, &resp, query, userId); err != nil {
 			return nil, err
 		}
 		return resp.Id, nil
@@ -135,7 +136,8 @@ func (m *defaultStudentsModel) Update(ctx context.Context, newData *Students) er
 	if err != nil {
 		return err
 	}
-
+	newData.DeleteTime = time.Unix(0, 0)
+	newData.DelState = globalkey.DelStateNo
 	mokerUsercenterStudentsIdKey := fmt.Sprintf("%s%v", cacheMokerUsercenterStudentsIdPrefix, data.Id)
 	mokerUsercenterStudentsIdUserIdKey := fmt.Sprintf("%s%v:%v", cacheMokerUsercenterStudentsIdUserIdPrefix, data.Id, data.UserId)
 	_, err = m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {

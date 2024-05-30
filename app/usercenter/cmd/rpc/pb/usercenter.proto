@@ -85,7 +85,7 @@ message UpdateStudentInfoResp{
   UserInfo userinfo = 1;
 }
 message UpdateTeacherInfoReq{
-  int64 stu_id = 1;
+  int64 tea_id = 1;
   int64 userId = 2;
   string name = 3;
   string faculty = 4;

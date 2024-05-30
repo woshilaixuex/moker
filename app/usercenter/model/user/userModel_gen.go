@@ -110,14 +110,14 @@ func(m *defaultUserModel)FindOneById(ctx context.Context, id int64) (*User, erro
 func (m *defaultUserModel) Insert(ctx context.Context,session sqlx.Session, data *User) (sql.Result, error) {
 	data.DeleteTime = time.Unix(0, 0)
 	data.DelState = globalkey.DelStateNo
-	mokerUsercenterUserIdKey := fmt.Sprintf("%s%v", cacheMokerUsercenterUserIdPrefix, data.Id)
+	mokerUsercenterUserAccountKey := fmt.Sprintf("%s%v", cacheMokerUsercenterUserAccountPrefix, data.Account)
 	ret, err := m.ExecCtx(ctx, func(ctx context.Context, conn sqlx.SqlConn) (result sql.Result, err error) {
 		query := fmt.Sprintf("insert into %s (%s) values (?, ?, ?, ?, ?, ?, ?, ?, ?)", m.table, userRowsExpectAutoSet)
 		if session != nil{
 			return session.ExecCtx(ctx, query, data.DeleteTime, data.DelState, data.Version, data.Email, data.Password, data.Account, data.Username, data.Sex, data.Avatar)
 		}
 		return conn.ExecCtx(ctx, query, data.DeleteTime, data.DelState, data.Version, data.Email, data.Password, data.Account, data.Username, data.Sex, data.Avatar)
-	}, mokerUsercenterUserIdKey)
+	}, mokerUsercenterUserAccountKey)
 	return ret, err
 }
 

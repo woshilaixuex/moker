@@ -37,21 +37,26 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 		[]rest.Route{
 			{
 				Method:  http.MethodGet,
-				Path:    "/user/userinfo",
+				Path:    "/user/info",
 				Handler: UserCenter.GetUserInfoHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodPut,
-				Path:    "/user/userinfo",
-				Handler: UserCenter.UpdateUserInfoHandler(serverCtx),
+				Path:    "/user/student",
+				Handler: UserCenter.UpdateStudentInfoHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/user/teacher",
+				Handler: UserCenter.UpdateTeacherInfoHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodDelete,
-				Path:    "/user/userinfo",
+				Path:    "/user",
 				Handler: UserCenter.DeleteUserInfoHandler(serverCtx),
 			},
 		},
 		rest.WithJwt(serverCtx.Config.JwtAuth.AccessSecret),
-		rest.WithPrefix("/swift/v1"),
+		rest.WithPrefix("/moker/v1"),
 	)
 }
