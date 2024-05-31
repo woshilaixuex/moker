@@ -57,7 +57,7 @@ type DeletSCourseReq struct {
 }
 
 type DeletSCourseResp struct {
-	Info string `json:"info"`
+	Courses []Course `json:"course"`
 }
 
 type AddSCourseReq struct {
@@ -66,7 +66,7 @@ type AddSCourseReq struct {
 }
 
 type AddSCourseResp struct {
-	Course Course `json:"course"`
+	Courses []Course `json:"course"`
 }
 
 type AddTCourseReq struct {
@@ -74,7 +74,7 @@ type AddTCourseReq struct {
 }
 
 type AddTCourseResp struct {
-	Course Course `json:"course"`
+	TCourses []TCourse `json:"tcourse"`
 }
 
 type UpdateTCourseReq struct {
@@ -82,7 +82,7 @@ type UpdateTCourseReq struct {
 }
 
 type UpdateTCourseResp struct {
-	Course Course `json:"course"`
+	TCourses []TCourse `json:"tcourse"`
 }
 
 type DeleteTCourseReq struct {
@@ -91,7 +91,7 @@ type DeleteTCourseReq struct {
 }
 
 type DeleteTCourseResp struct {
-	Info string `json:"info"`
+	TCourses []TCourse `json:"tcourse"`
 }
 
 type GetTCourseReq struct {

@@ -2,7 +2,6 @@ package CourseController
 
 import (
 	"context"
-	"fmt"
 	"github.com/moker/app/course/cmd/rpc/pb"
 
 	"github.com/moker/app/course/cmd/api/internal/svc"
@@ -31,9 +30,24 @@ func (l *AddSCourseLogic) AddSCourse(req *types.AddSCourseReq) (resp *types.AddS
 		StuId: req.StuId,
 		CId:   req.CId,
 	})
-	fmt.Println(info)
 	if err != nil {
 		return nil, err
 	}
-	return &types.AddSCourseResp{}, nil
+	course, err := l.svcCtx.CourseCenterRPC.GetSearchECourse(l.ctx, &pb.SearchERequest{
+		StuId: req.StuId,
+	})
+	if err != nil {
+		return nil, err
+	}
+	courses := make([]types.Course, 0)
+	if info.Info == "成功" {
+		for _, reply := range course.Replies {
+			c := new(types.Course)
+			setSearchECourse(c, reply)
+			courses = append(courses, *c)
+		}
+	}
+	return &types.AddSCourseResp{
+		Courses: courses,
+	}, nil
 }

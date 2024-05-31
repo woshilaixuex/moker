@@ -39,7 +39,7 @@ func NewGetGreeterClient(cc grpc.ClientConnInterface) GetGreeterClient {
 
 func (c *getGreeterClient) GetCourse(ctx context.Context, in *CourseRequest, opts ...grpc.CallOption) (*CourseReplyList, error) {
 	out := new(CourseReplyList)
-	err := c.cc.Invoke(ctx, "/pb.getGreeter/getCourse", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/CC.getGreeter/getCourse", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func (c *getGreeterClient) GetCourse(ctx context.Context, in *CourseRequest, opt
 
 func (c *getGreeterClient) GetSearchCourse(ctx context.Context, in *SearchACRequest, opts ...grpc.CallOption) (*SearchACReplyList, error) {
 	out := new(SearchACReplyList)
-	err := c.cc.Invoke(ctx, "/pb.getGreeter/getSearchCourse", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/CC.getGreeter/getSearchCourse", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -57,7 +57,7 @@ func (c *getGreeterClient) GetSearchCourse(ctx context.Context, in *SearchACRequ
 
 func (c *getGreeterClient) GetSearchECourse(ctx context.Context, in *SearchERequest, opts ...grpc.CallOption) (*SearchEReplyList, error) {
 	out := new(SearchEReplyList)
-	err := c.cc.Invoke(ctx, "/pb.getGreeter/getSearchECourse", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/CC.getGreeter/getSearchECourse", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +66,7 @@ func (c *getGreeterClient) GetSearchECourse(ctx context.Context, in *SearchERequ
 
 func (c *getGreeterClient) DeleteSCourse(ctx context.Context, in *SdelCRequest, opts ...grpc.CallOption) (*SdelCReply, error) {
 	out := new(SdelCReply)
-	err := c.cc.Invoke(ctx, "/pb.getGreeter/deleteSCourse", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/CC.getGreeter/deleteSCourse", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ func (c *getGreeterClient) DeleteSCourse(ctx context.Context, in *SdelCRequest, 
 
 func (c *getGreeterClient) PutSCourse(ctx context.Context, in *SputCRequest, opts ...grpc.CallOption) (*SputCReply, error) {
 	out := new(SputCReply)
-	err := c.cc.Invoke(ctx, "/pb.getGreeter/putSCourse", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/CC.getGreeter/putSCourse", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -84,7 +84,7 @@ func (c *getGreeterClient) PutSCourse(ctx context.Context, in *SputCRequest, opt
 
 func (c *getGreeterClient) PutTCourse(ctx context.Context, in *TputCRequest, opts ...grpc.CallOption) (*TputCReply, error) {
 	out := new(TputCReply)
-	err := c.cc.Invoke(ctx, "/pb.getGreeter/putTCourse", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/CC.getGreeter/putTCourse", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -93,7 +93,7 @@ func (c *getGreeterClient) PutTCourse(ctx context.Context, in *TputCRequest, opt
 
 func (c *getGreeterClient) UpdateTCourse(ctx context.Context, in *TupdateCRequest, opts ...grpc.CallOption) (*TupdateCReply, error) {
 	out := new(TupdateCReply)
-	err := c.cc.Invoke(ctx, "/pb.getGreeter/updateTCourse", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/CC.getGreeter/updateTCourse", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -102,7 +102,7 @@ func (c *getGreeterClient) UpdateTCourse(ctx context.Context, in *TupdateCReques
 
 func (c *getGreeterClient) DeleteTCourse(ctx context.Context, in *TdeleteCRequest, opts ...grpc.CallOption) (*TdeleteCReply, error) {
 	out := new(TdeleteCReply)
-	err := c.cc.Invoke(ctx, "/pb.getGreeter/deleteTCourse", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/CC.getGreeter/deleteTCourse", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -111,7 +111,7 @@ func (c *getGreeterClient) DeleteTCourse(ctx context.Context, in *TdeleteCReques
 
 func (c *getGreeterClient) GetTCourse(ctx context.Context, in *TgetCRequest, opts ...grpc.CallOption) (*TgetCReplyList, error) {
 	out := new(TgetCReplyList)
-	err := c.cc.Invoke(ctx, "/pb.getGreeter/getTCourse", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/CC.getGreeter/getTCourse", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -188,7 +188,7 @@ func _GetGreeter_GetCourse_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.getGreeter/getCourse",
+		FullMethod: "/CC.getGreeter/getCourse",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GetGreeterServer).GetCourse(ctx, req.(*CourseRequest))
@@ -206,7 +206,7 @@ func _GetGreeter_GetSearchCourse_Handler(srv interface{}, ctx context.Context, d
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.getGreeter/getSearchCourse",
+		FullMethod: "/CC.getGreeter/getSearchCourse",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GetGreeterServer).GetSearchCourse(ctx, req.(*SearchACRequest))
@@ -224,7 +224,7 @@ func _GetGreeter_GetSearchECourse_Handler(srv interface{}, ctx context.Context, 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.getGreeter/getSearchECourse",
+		FullMethod: "/CC.getGreeter/getSearchECourse",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GetGreeterServer).GetSearchECourse(ctx, req.(*SearchERequest))
@@ -242,7 +242,7 @@ func _GetGreeter_DeleteSCourse_Handler(srv interface{}, ctx context.Context, dec
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.getGreeter/deleteSCourse",
+		FullMethod: "/CC.getGreeter/deleteSCourse",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GetGreeterServer).DeleteSCourse(ctx, req.(*SdelCRequest))
@@ -260,7 +260,7 @@ func _GetGreeter_PutSCourse_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.getGreeter/putSCourse",
+		FullMethod: "/CC.getGreeter/putSCourse",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GetGreeterServer).PutSCourse(ctx, req.(*SputCRequest))
@@ -278,7 +278,7 @@ func _GetGreeter_PutTCourse_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.getGreeter/putTCourse",
+		FullMethod: "/CC.getGreeter/putTCourse",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GetGreeterServer).PutTCourse(ctx, req.(*TputCRequest))
@@ -296,7 +296,7 @@ func _GetGreeter_UpdateTCourse_Handler(srv interface{}, ctx context.Context, dec
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.getGreeter/updateTCourse",
+		FullMethod: "/CC.getGreeter/updateTCourse",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GetGreeterServer).UpdateTCourse(ctx, req.(*TupdateCRequest))
@@ -314,7 +314,7 @@ func _GetGreeter_DeleteTCourse_Handler(srv interface{}, ctx context.Context, dec
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.getGreeter/deleteTCourse",
+		FullMethod: "/CC.getGreeter/deleteTCourse",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GetGreeterServer).DeleteTCourse(ctx, req.(*TdeleteCRequest))
@@ -332,7 +332,7 @@ func _GetGreeter_GetTCourse_Handler(srv interface{}, ctx context.Context, dec fu
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/pb.getGreeter/getTCourse",
+		FullMethod: "/CC.getGreeter/getTCourse",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GetGreeterServer).GetTCourse(ctx, req.(*TgetCRequest))
@@ -344,7 +344,7 @@ func _GetGreeter_GetTCourse_Handler(srv interface{}, ctx context.Context, dec fu
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var GetGreeter_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "pb.getGreeter",
+	ServiceName: "CC.getGreeter",
 	HandlerType: (*GetGreeterServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

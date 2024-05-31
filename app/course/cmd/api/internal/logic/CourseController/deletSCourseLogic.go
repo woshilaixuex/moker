@@ -33,7 +33,21 @@ func (l *DeletSCourseLogic) DeletSCourse(req *types.DeletSCourseReq) (resp *type
 	if err != nil {
 		return nil, err
 	}
+	course, err := l.svcCtx.CourseCenterRPC.GetSearchECourse(l.ctx, &pb.SearchERequest{
+		StuId: req.StuId,
+	})
+	if err != nil {
+		return nil, err
+	}
+	courses := make([]types.Course, 0)
+	if info.Info == "成功" {
+		for _, reply := range course.Replies {
+			c := new(types.Course)
+			setSearchECourse(c, reply)
+			courses = append(courses, *c)
+		}
+	}
 	return &types.DeletSCourseResp{
-		Info: info.GetInfo(),
+		Courses: courses,
 	}, nil
 }

@@ -38,5 +38,23 @@ func (l *AddTCourseLogic) AddTCourse(req *types.AddTCourseReq) (resp *types.AddT
 	if err != nil {
 		return nil, err
 	}
-	return &types.AddTCourseResp{}, nil
+	GetTCourseResp, err := l.svcCtx.CourseCenterRPC.GetTCourse(l.ctx, &pb.TgetCRequest{
+		TId: req.Course.TeaId,
+	})
+	if err != nil {
+		return nil, err
+	}
+	courses := make([]types.TCourse, 0)
+	if info.Info == "成功" {
+		for _, reply := range GetTCourseResp.Replies {
+			c := new(types.TCourse)
+			c.Course = *new(types.Course)
+			setTCourse(&c.Course, reply)
+			c.Respon = reply.Respon
+			courses = append(courses, *c)
+		}
+	}
+	return &types.AddTCourseResp{
+		TCourses: courses,
+	}, nil
 }

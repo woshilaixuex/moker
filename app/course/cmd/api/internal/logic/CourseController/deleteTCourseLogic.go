@@ -33,7 +33,23 @@ func (l *DeleteTCourseLogic) DeleteTCourse(req *types.DeleteTCourseReq) (resp *t
 	if err != nil {
 		return nil, err
 	}
+	GetTCourseResp, err := l.svcCtx.CourseCenterRPC.GetTCourse(l.ctx, &pb.TgetCRequest{
+		TId: req.TeaId,
+	})
+	if err != nil {
+		return nil, err
+	}
+	courses := make([]types.TCourse, 0)
+	if info.Info == "成功" {
+		for _, reply := range GetTCourseResp.Replies {
+			c := new(types.TCourse)
+			c.Course = *new(types.Course)
+			setTCourse(&c.Course, reply)
+			c.Respon = reply.Respon
+			courses = append(courses, *c)
+		}
+	}
 	return &types.DeleteTCourseResp{
-		Info: info.Info,
+		TCourses: courses,
 	}, nil
 }

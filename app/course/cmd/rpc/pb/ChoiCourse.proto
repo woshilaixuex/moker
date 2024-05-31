@@ -1,8 +1,10 @@
 syntax = "proto3";
 
+option java_multiple_files=false;
+option java_package = "com.wxw.notes.holle.proto";
+option java_outer_classname="CC";
 option go_package = "./pb";
-
-package pb;
+package CC;
 // 请求消息
 message CourseRequest {
 }
@@ -10,9 +12,9 @@ message CourseRequest {
 // 响应消息
 message CourseReply {
    int64 c_id=1;
-   string c_name=2;
+  string c_name=2;
    string info=3;
-   int64  teacher_id=4;
+   int64 teacher_id=4;
    string teacher_name=5;
 }
 message CourseReplyList {
@@ -111,8 +113,8 @@ message TgetCRequest {
 }
 
 message TgetCReply {
-  int64 t_id=1;
-  string t_name=2;
+ int64 t_id=1;
+ string t_name=2;
   int64 c_id=3;
    string c_name=4;
    string info=5;
