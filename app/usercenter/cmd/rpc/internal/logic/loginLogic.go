@@ -41,7 +41,6 @@ func (l *LoginLogic) Login(in *pb.LoginReq) (*pb.LoginResp, error) {
 	}
 	// todo: 凭证生成
 	generateTokenLogic := NewGenerateTokenLogic(l.ctx, l.svcCtx)
-	fmt.Println(userData.Id)
 	tokenResp, err := generateTokenLogic.GenerateToken(&pb.GenerateTokenReq{
 		UserId: userData.Id,
 	})

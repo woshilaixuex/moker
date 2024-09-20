@@ -28,10 +28,10 @@ service course-api {
 	get /courses (GetCoursReq) returns (GetCoursResp)
 	@doc "获取搜索课程信息"
 	@handler GetSearchCourse
-	get /course/search (GetSearchCourseReq) returns (GetSearchCourseResp)
+	get /course/search/:c_name (GetSearchCourseReq) returns (GetSearchCourseResp)
 	@doc "获取已选课程信息"
 	@handler GetECourse
-	get /course/stu/ecourse (GetECourseReq) returns (GetECourseResp)
+	get /course/stu/ecourse/:stu_id (GetECourseReq) returns (GetECourseResp)
 	@doc "删除选课程信息"
 	@handler DeletSCourse
 	delete /course/stu/ecourse (DeletSCourseReq) returns (DeletSCourseResp)
@@ -49,5 +49,5 @@ service course-api {
 	delete /course/tea/tc (DeleteTCourseReq) returns (DeleteTCourseResp)
 	@doc "获取教师自己的课程信息"
 	@handler GetTCourse
-	get /course/tea/tc (GetTCourseReq) returns (GetTCourseResp)
+	get /course/tea/:tea_id (GetTCourseReq) returns (GetTCourseResp)
 }

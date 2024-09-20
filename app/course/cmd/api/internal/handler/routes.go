@@ -20,12 +20,12 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
-				Path:    "/course/search",
+				Path:    "/course/search/:c_name",
 				Handler: CourseController.GetSearchCourseHandler(serverCtx),
 			},
 			{
 				Method:  http.MethodGet,
-				Path:    "/course/stu/ecourse",
+				Path:    "/course/stu/ecourse/:stu_id",
 				Handler: CourseController.GetECourseHandler(serverCtx),
 			},
 			{
@@ -55,7 +55,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
-				Path:    "/course/tea/tc",
+				Path:    "/course/tea/:tea_id",
 				Handler: CourseController.GetTCourseHandler(serverCtx),
 			},
 		},

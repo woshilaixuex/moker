@@ -3,7 +3,7 @@ syntax = "proto3";
 option java_multiple_files=false;
 option java_package = "com.wxw.notes.holle.proto";
 option java_outer_classname="CC";
-option go_package = "./pb";
+option go_package = "/pb";
 package CC;
 // 请求消息
 message CourseRequest {
@@ -62,7 +62,6 @@ message SputCRequest {
   int64 stu_id=1;
   int64 c_id=2;
 }
-
 // 响应消息
 message SputCReply {
   string info=1;

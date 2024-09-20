@@ -2,10 +2,11 @@ package CourseController
 
 import (
 	"context"
-	"github.com/moker/app/course/cmd/rpc/pb"
-
+	"fmt"
 	"github.com/moker/app/course/cmd/api/internal/svc"
 	"github.com/moker/app/course/cmd/api/internal/types"
+	"github.com/moker/app/course/cmd/rpc/pb"
+	"strconv"
 
 	"github.com/zeromicro/go-zero/core/logx"
 )
@@ -29,6 +30,8 @@ func (l *GetECourseLogic) GetECourse(req *types.GetECourseReq) (resp *types.GetE
 	course, err := l.svcCtx.CourseCenterRPC.GetSearchECourse(l.ctx, &pb.SearchERequest{
 		StuId: req.StuId,
 	})
+	stuIDStr := strconv.FormatInt(req.StuId, 10)
+	fmt.Println("学生id:" + stuIDStr)
 	if err != nil {
 		return nil, err
 	}
@@ -44,7 +47,7 @@ func (l *GetECourseLogic) GetECourse(req *types.GetECourseReq) (resp *types.GetE
 }
 func setSearchECourse(c *types.Course, reply *pb.SearchEReply) {
 	c.CId = reply.GetCId()
-	c.CName = reply.GetTeacherName()
+	c.CName = reply.GetCName()
 	c.TeaId = reply.GetTeacherId()
 	c.TeaName = reply.GetTeacherName()
 	c.Info = reply.GetInfo()

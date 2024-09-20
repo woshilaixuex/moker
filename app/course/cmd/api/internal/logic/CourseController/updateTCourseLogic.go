@@ -2,7 +2,6 @@ package CourseController
 
 import (
 	"context"
-	"fmt"
 	"github.com/moker/app/course/cmd/rpc/pb"
 
 	"github.com/moker/app/course/cmd/api/internal/svc"
@@ -34,9 +33,27 @@ func (l *UpdateTCourseLogic) UpdateTCourse(req *types.UpdateTCourseReq) (resp *t
 		CName: req.Course.CName,
 		Info:  req.Course.Info,
 	})
-	fmt.Println(info)
-	if err != nil {
-		return nil, err
+	GetTCourseResp, err := l.svcCtx.CourseCenterRPC.GetTCourse(l.ctx, &pb.TgetCRequest{
+		TId: req.Course.TeaId,
+	})
+	courses := make([]types.TCourse, 0)
+	if info.Info == "成功" {
+		for _, reply := range GetTCourseResp.Replies {
+			c := new(types.TCourse)
+			c.Course = *new(types.Course)
+			setTCourse(&c.Course, reply)
+			c.Respon = reply.GetRespon()
+			courses = append(courses, *c)
+		}
 	}
-	return &types.UpdateTCourseResp{}, nil
+	return &types.UpdateTCourseResp{
+		TCourses: courses,
+	}, nil
+}
+func setUpdateTCourse(c *types.Course, reply *pb.TgetCReply) {
+	c.CId = reply.GetCId()
+	c.CName = reply.GetCName()
+	c.TeaId = reply.GetTId()
+	c.TeaName = reply.GetTName()
+	c.Info = reply.GetInfo()
 }

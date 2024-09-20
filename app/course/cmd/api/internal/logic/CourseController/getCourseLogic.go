@@ -42,7 +42,7 @@ func (l *GetCourseLogic) GetCourse(req *types.GetCoursReq) (resp *types.GetCours
 }
 func setCourse(c *types.Course, reply *pb.CourseReply) {
 	c.CId = reply.GetCId()
-	c.CName = reply.GetTeacherName()
+	c.CName = reply.GetCName()
 	c.TeaId = reply.GetTeacherId()
 	c.TeaName = reply.GetTeacherName()
 	c.Info = reply.GetInfo()

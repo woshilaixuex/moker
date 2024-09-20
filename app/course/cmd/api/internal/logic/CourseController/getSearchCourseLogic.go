@@ -44,7 +44,7 @@ func (l *GetSearchCourseLogic) GetSearchCourse(req *types.GetSearchCourseReq) (r
 }
 func setSearchCourse(c *types.Course, reply *pb.SearchACReply) {
 	c.CId = reply.GetCId()
-	c.CName = reply.GetTeacherName()
+	c.CName = reply.GetCName()
 	c.TeaId = reply.GetTeacherId()
 	c.TeaName = reply.GetTeacherName()
 	c.Info = reply.GetInfo()

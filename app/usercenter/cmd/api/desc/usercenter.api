@@ -45,5 +45,5 @@ service usercenter-api {
 	put /user/teacher (UpdateTeacherInfoReq) returns (UpdateTeacherInfoResp)
 	@doc "注销用户"
 	@handler DeleteUserInfoHandler
-	delete /user (DeleteUserInfoReq) returns (DeleteUserInfoResp)
+	post /user (DeleteUserInfoReq) returns (DeleteUserInfoResp)
 }

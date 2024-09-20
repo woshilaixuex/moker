@@ -35,7 +35,7 @@ type (
 )
 type (
     GetSearchCourseReq{
-        CName string `json:"c_name"`
+        CName string `path:"c_name"`
     }
     GetSearchCourseResp{
         Courses []Course `json:"course"`
@@ -43,7 +43,7 @@ type (
 )
 type (
     GetECourseReq{
-        StuId int64 `json:"stu_id"`
+        StuId int64 `path:"stu_id"`
     }
     GetECourseResp{
         Courses []Course `json:"course"`
@@ -94,7 +94,7 @@ type (
 )
 type (
     GetTCourseReq{
-        TeaId int64 `json:"tea_id"`
+        TeaId int64 `path:"tea_id""`
     }
     GetTCourseResp{
         TCourses []TCourse `json:"tcourse"`

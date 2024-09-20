@@ -79,7 +79,9 @@ type UpdateTeacherInfoResp struct {
 }
 
 type DeleteUserInfoReq struct {
+	StuId int64 `json:"stu_id"`
 }
 
 type DeleteUserInfoResp struct {
+	IsOk bool `json:"isOk"`
 }

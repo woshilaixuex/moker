@@ -51,7 +51,7 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: UserCenter.UpdateTeacherInfoHandler(serverCtx),
 			},
 			{
-				Method:  http.MethodDelete,
+				Method:  http.MethodPost,
 				Path:    "/user",
 				Handler: UserCenter.DeleteUserInfoHandler(serverCtx),
 			},

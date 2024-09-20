@@ -27,6 +27,7 @@ func (l *GetUserInfoLogic) GetUserInfo(in *pb.GetUserInfoReq) (*pb.GetUserInfoRe
 	// todo:
 	userInfo := new(pb.UserInfo)
 	userInfo.Role = new(pb.Role)
+	fmt.Println(in.GetUserId())
 	user, err := l.svcCtx.UserModel.FindOneById(l.ctx, in.UserId)
 	if err != nil {
 	}
@@ -46,7 +47,6 @@ func (l *GetUserInfoLogic) GetUserInfo(in *pb.GetUserInfoReq) (*pb.GetUserInfoRe
 		}
 		copyRoleInfo(userInfo, one)
 	}
-	fmt.Println(userInfo)
 	return &pb.GetUserInfoResp{
 		Userinfo: userInfo,
 	}, nil

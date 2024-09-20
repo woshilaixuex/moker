@@ -36,7 +36,7 @@ type GetCoursResp struct {
 }
 
 type GetSearchCourseReq struct {
-	CName string `json:"c_name"`
+	CName string `path:"c_name"`
 }
 
 type GetSearchCourseResp struct {
@@ -44,7 +44,7 @@ type GetSearchCourseResp struct {
 }
 
 type GetECourseReq struct {
-	StuId int64 `json:"stu_id"`
+	StuId int64 `path:"stu_id"`
 }
 
 type GetECourseResp struct {
@@ -95,7 +95,7 @@ type DeleteTCourseResp struct {
 }
 
 type GetTCourseReq struct {
-	TeaId int64 `json:"tea_id"`
+	TeaId int64 `path:"tea_id""`
 }
 
 type GetTCourseResp struct {

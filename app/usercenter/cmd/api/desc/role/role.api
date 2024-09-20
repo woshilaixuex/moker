@@ -43,7 +43,9 @@ type (
         Role    Role `json:"role"`
     }
     DeleteUserInfoReq {
+        StuId int64 `json:"stu_id"`
     }
     DeleteUserInfoResp {
+        isOk bool `json:"isOk"`
     }
 )
